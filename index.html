@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Fiches, cartes mentales interactives, quiz et checklist pour réviser le dossier patient et l'identitovigilance (titre pro SAMA).">
+<meta name="theme-color" content="#7a4fd6">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237a4fd6'/%3E%3Cpath d='M20 34l8 8 16-18' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<title>Révisions SAMA du 13 octobre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Patrick+Hand&family=Permanent+Marker&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,800&display=swap">
+<style>
+/* Layout : contenu à onglets à gauche + checklist latérale collante à droite (tiroir sur mobile). Vert = mot défini, rouge = terminologie. */
+:root{
+  --bg:#f3f5fb; --surface:#ffffff; --surface2:#eef1f9; --ink:#1c2042; --muted:#5d6385; --line:#dde2f0;
+  --dm:#1b7fd1; --dm-soft:#dcebfb; --iv:#7a4fd6; --iv-soft:#ebe3fd; --sama:#e08a12; --sama-soft:#fdf0d9;
+  --def:#14894b; --def-soft:#dcf3e5; --term:#d22f3c; --term-soft:#fde3e5;
+  --ok:#1f9d55; --ok-soft:#dcf5e6; --ko:#d9483b; --ko-soft:#fde4e1; --sun:#f2b51f; --sun-soft:#fff2d3;
+  --shadow:0 6px 18px rgba(28,32,66,.08);
+  --f-display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Nunito Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121428; --surface:#1c1f3b; --surface2:#262a4b; --ink:#eef0ff; --muted:#a7acd0; --line:#323760;
+  --dm:#5fb0ff; --dm-soft:#163556; --iv:#b096ff; --iv-soft:#33275e; --sama:#ffb648; --sama-soft:#46341a;
+  --def:#4fd68a; --def-soft:#173d29; --term:#ff7b84; --term-soft:#4a1f24;
+  --ok:#4fd187; --ok-soft:#173d29; --ko:#ff7b6e; --ko-soft:#4a1f1b; --sun:#ffc95c; --sun-soft:#45391b;
+  --shadow:0 6px 18px rgba(0,0,0,.35); color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#121428; --surface:#1c1f3b; --surface2:#262a4b; --ink:#eef0ff; --muted:#a7acd0; --line:#323760;
+  --dm:#5fb0ff; --dm-soft:#163556; --iv:#b096ff; --iv-soft:#33275e; --sama:#ffb648; --sama-soft:#46341a;
+  --def:#4fd68a; --def-soft:#173d29; --term:#ff7b84; --term-soft:#4a1f24;
+  --ok:#4fd187; --ok-soft:#173d29; --ko:#ff7b6e; --ko-soft:#4a1f1b; --sun:#ffc95c; --sun-soft:#45391b;
+  --shadow:0 6px 18px rgba(0,0,0,.35); color-scheme:dark;}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.55}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:16px;padding-block:20px 80px}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--iv);outline-offset:2px;border-radius:8px}
+dfn{font-style:normal;font-weight:800;color:var(--def)}
+.tm{font-style:normal;font-weight:800;color:var(--term)}
+
+/* En-tête */
+.band{position:relative;background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:20px 22px 20px 34px;overflow:hidden}
+.band::before{content:"";position:absolute;left:0;top:0;bottom:0;width:14px;background:repeating-linear-gradient(180deg,var(--dm) 0 18px,var(--iv) 18px 36px,var(--sama) 36px 54px)}
+.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.band h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:800;margin-top:2px}
+.band h1 span{color:var(--iv)}
+.idline{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:800;padding:4px 10px;border-radius:999px;background:var(--surface2);color:var(--muted);font-variant-numeric:tabular-nums}
+.tag.sun{background:var(--sun-soft);color:var(--ink)}
+.tag.dm{background:var(--dm-soft);color:var(--ink)} .tag.iv{background:var(--iv-soft);color:var(--ink)}
+
+/* Grille principale */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:22px;margin-top:20px;align-items:start}
+main{min-width:0;display:grid;gap:18px}
+
+/* Onglets */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px}
+.tab{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;font-weight:800;font-size:.92rem;display:flex;align-items:center;gap:7px}
+.tab .dot{width:10px;height:10px;border-radius:50%}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.panel{display:grid;gap:20px}
+.intro{color:var(--muted);max-width:70ch;margin:0}
+.seg{display:inline-flex;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:none;border-radius:999px;padding:6px 14px;font-weight:800;font-size:.88rem;color:var(--muted)}
+.seg button.on{background:var(--surface2);color:var(--ink)}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.legend-c{display:flex;gap:8px;flex-wrap:wrap}
+.legend-c span{font-size:.82rem;font-weight:800;padding:4px 10px;border-radius:999px}
+.legend-c .l1{background:var(--def-soft);color:var(--def)} .legend-c .l2{background:var(--term-soft);color:var(--term)}
+
+/* Fiches */
+.bloc-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bloc-title h2{font-size:1.6rem}
+.bloc-title .pill{font-weight:800;font-size:.8rem;padding:4px 12px;border-radius:999px;background:var(--surface2);color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;min-width:0;border:2px solid transparent;transition:border-color .2s;scroll-margin-top:70px}
+.card.st2{border-color:var(--ok)}
+.card header{padding:12px 16px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
+.card.dm header{background:var(--dm-soft)} .card.iv header{background:var(--iv-soft)}
+.num{font-family:var(--f-display);font-weight:800;font-size:.95rem;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff}
+.dm .num{background:var(--dm)} .iv .num{background:var(--iv)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .num{color:#10122a}}
+:root[data-theme="dark"] .num{color:#10122a}
+.card h3{font-size:1.15rem;font-weight:700}
+.card .body{padding:14px 16px;display:grid;gap:10px;flex:1;align-content:start}
+.card .lead{margin:0;font-weight:600}
+.card ul{margin:0;padding-left:1.1em;display:grid;gap:5px}
+.card li::marker{color:var(--muted)}
+.mini-table{width:100%;border-collapse:collapse;font-size:.9rem;font-variant-numeric:tabular-nums}
+.mini-table td{padding:6px;border-bottom:1px solid var(--line);vertical-align:top}
+.mini-table td:first-child{font-weight:800;white-space:nowrap}
+.mini-table caption{text-align:left;font-weight:800;font-size:.85rem;color:var(--muted);padding-bottom:4px}
+.example{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem;background:var(--surface2);border-radius:10px;padding:8px 10px;overflow-x:auto}
+.example s{color:var(--ko)} .example b{color:var(--ok)}
+.card footer{padding:10px 16px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.status{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-weight:800;font-size:.82rem}
+.status.s0{color:var(--muted)} .status.s1{border-color:var(--sun);background:var(--sun-soft)} .status.s2{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.qbadge{font-size:.78rem;font-weight:800;padding:3px 9px;border-radius:999px}
+.qbadge.ok{background:var(--ok-soft);color:var(--ok)} .qbadge.ko{background:var(--ko-soft);color:var(--ko)}
+
+/* Cartes mentales */
+.mmbox{background:var(--surface);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+.mmbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.mmbar .seg button.on.m-dm{background:var(--dm-soft)} .mmbar .seg button.on.m-iv{background:var(--iv-soft)} .mmbar .seg button.on.m-sama{background:var(--sama-soft)}
+.small{border:2px solid var(--line);background:var(--surface);border-radius:10px;padding:5px 12px;font-weight:800;font-size:.85rem}
+.mmscroll{overflow-x:auto;padding:10px}
+.mm-hint{padding:8px 16px 14px;font-size:.85rem;color:var(--muted)}
+#mmsvg{display:block;width:100%;min-width:760px;height:auto;font-family:var(--f-body)}
+#mmsvg .lt{font-size:14px;font-weight:700;fill:var(--ink)}
+#mmsvg .bt{font-size:16px;font-weight:800;fill:#fff;font-family:var(--f-display)}
+#mmsvg .ct{font-size:20px;font-weight:800;fill:var(--bg);font-family:var(--f-display)}
+#mmsvg .qt{font-size:17px;font-weight:800}
+#mmsvg .q{display:none}
+#mmsvg.guess .leaf:not(.shown) .q{display:inline}
+#mmsvg.guess .leaf:not(.shown) .lt{opacity:0}
+#mmsvg.guess .branch{cursor:pointer}
+#mmsvg .branch rect,#mmsvg .leaf rect{transition:transform .2s;transform-box:fill-box;transform-origin:center}
+#mmsvg .branch:hover rect{transform:scale(1.06)}
+.small.on{background:var(--iv);color:#fff;border-color:var(--iv)}
+
+/* Checklist latérale */
+aside.side{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;background:var(--surface);border-radius:20px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.side-head{padding:16px 16px 12px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border-bottom:1px solid var(--line)}
+.side-head h2{font-size:1.25rem}
+.side-head .sub{font-size:.8rem;color:var(--muted);font-weight:700}
+.ring{width:58px;height:58px;position:relative;display:grid;place-items:center}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring b{font-family:var(--f-display);font-size:.95rem}
+.closeSide{display:none;border:0;background:var(--surface2);border-radius:10px;width:34px;height:34px;font-weight:800}
+.bar{height:10px;border-radius:999px;background:var(--surface2);overflow:hidden;display:flex;margin:10px 16px 4px}
+.bar span{height:100%;transition:width .4s}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:.75rem;font-weight:700;color:var(--muted);padding:0 16px 8px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px}
+.cl h3{font-size:.9rem;padding:8px 16px;letter-spacing:.06em;text-transform:uppercase;font-family:var(--f-body);font-weight:800}
+.cl.dm h3{color:var(--dm);background:var(--dm-soft)} .cl.iv h3{color:var(--iv);background:var(--iv-soft)}
+.row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:7px 16px;border-top:1px solid var(--line)}
+.row a{color:var(--ink);text-decoration:none;font-weight:600;font-size:.9rem;line-height:1.3}
+.row a:hover{text-decoration:underline}
+.chk{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);background:var(--surface2);display:grid;place-items:center;font-weight:800;font-size:.8rem;padding:0}
+.chk.s1{border-color:var(--sun);background:var(--sun-soft)} .chk.s2{border-color:var(--ok);background:var(--ok);color:#fff}
+.qdot{width:10px;height:10px;border-radius:50%;background:var(--surface2)}
+.qdot.ok{background:var(--ok)} .qdot.ko{background:var(--ko)}
+.side-foot{padding:12px 16px;border-top:1px solid var(--line);display:grid;gap:6px;font-size:.78rem;color:var(--muted)}
+.side-foot button{justify-self:start;border:0;background:none;color:var(--muted);text-decoration:underline;font-size:.8rem;padding:0}
+.fab{display:none;position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;border:0;background:var(--ink);color:var(--bg);font-weight:800;border-radius:999px;padding:12px 18px;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.scrim{display:none}
+@media (max-width:980px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  aside.side{position:fixed;top:0;right:0;bottom:0;width:min(340px,88vw);max-height:none;border-radius:20px 0 0 20px;z-index:40;transform:translateX(105%);transition:transform .25s;padding-top:env(safe-area-inset-top,0px)}
+  aside.side.open{transform:none}
+  .closeSide{display:block}
+  .fab{display:block}
+  .scrim.open{display:block;position:fixed;inset:0;background:rgba(10,12,30,.45);z-index:35}
+}
+
+/* Quiz */
+.qbox{background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:22px;display:grid;gap:16px}
+.qsetup{display:grid;gap:14px}
+.qsetup label{font-weight:800;font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.big{border:0;background:var(--iv);color:#fff;font-weight:800;font-size:1.05rem;padding:12px 22px;border-radius:14px;justify-self:start;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .big{color:#10122a}}
+:root[data-theme="dark"] .big{color:#10122a}
+.big:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.big.ghost{background:var(--surface2);color:var(--ink)}
+.qhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots i{width:12px;height:12px;border-radius:4px;background:var(--surface2)}
+.dots i.ok{background:var(--ok)} .dots i.ko{background:var(--ko)} .dots i.cur{background:var(--iv)}
+.qtext{font-family:var(--f-display);font-size:1.35rem;font-weight:700;line-height:1.25}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;font-weight:600;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
+.opt:hover:not(:disabled){border-color:var(--iv)}
+.opt .k{width:28px;height:28px;border-radius:8px;background:var(--surface2);display:grid;place-items:center;font-weight:800;font-size:.85rem}
+.opt.good{border-color:var(--ok);background:var(--ok-soft)} .opt.good .k{background:var(--ok);color:#fff}
+.opt.bad{border-color:var(--ko);background:var(--ko-soft)} .opt.bad .k{background:var(--ko);color:#fff}
+.opt:disabled{cursor:default}
+.fb{border-radius:14px;padding:12px 14px;font-weight:600}
+.fb.ok{background:var(--ok-soft)} .fb.ko{background:var(--ko-soft)}
+.fb strong{font-family:var(--f-display);font-size:1.1rem;display:block}
+.score{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.score .big-n{font-family:var(--f-display);font-size:3.4rem;font-weight:800;line-height:1}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.res{border-radius:16px;padding:14px 16px}
+.res.ok{background:var(--ok-soft)} .res.ko{background:var(--ko-soft)}
+.res h4{margin:0 0 8px;font-size:1.1rem}
+.res ul{margin:0;padding-left:1.1em;display:grid;gap:4px}
+.res a{color:var(--ink);font-weight:700}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.note{font-size:.85rem;color:var(--muted)}
+@media (max-width:520px){.score{grid-template-columns:1fr}}
+
+/* Cartes mentales style croquis (papier fixe, identique en clair et sombre) */
+.paper{--paper:#f8f3ea;--pen:#1f1d1a;background:var(--paper);color:var(--pen);border-radius:8px;box-shadow:var(--shadow);font-family:"Patrick Hand","Comic Sans MS","Segoe Print",cursive;padding:30px 26px;font-size:1.08rem;line-height:1.3}
+.pgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,1.15fr) minmax(0,1fr);grid-template-areas:"tl c tr" "ml c mr" "bl c br";column-gap:112px;row-gap:30px;align-items:center}
+.tl{grid-area:tl}.tr{grid-area:tr}.ml{grid-area:ml}.mr{grid-area:mr}.bl{grid-area:bl}.br{grid-area:br}
+.ctr{grid-area:c;text-align:center;display:grid;gap:12px;justify-items:center}
+.ttl{font-family:"Permanent Marker","Patrick Hand",cursive;font-size:clamp(2.3rem,4vw,3.5rem);line-height:1.02;display:grid}
+.ctr p{margin:0;max-width:28ch;font-size:1.02rem}
+.ctr .ex{font-size:.95rem;opacity:.75}
+.blk{position:relative;text-align:center;min-width:0}
+.blk h3{font-family:"Patrick Hand",cursive;font-size:1.4rem;font-weight:400}
+.blk h3 span{padding:0 4px}
+.blk ul{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:7px;justify-items:center}
+.arrowWrap{position:absolute;top:50%;width:66px;height:42px;margin-top:-21px;pointer-events:none}
+.sideL .arrowWrap{right:-86px}.sideR .arrowWrap{left:-86px}
+.arrowWrap svg{width:100%;height:100%;transform:rotate(var(--r));overflow:visible}
+.pt{position:relative;border-bottom:2px dotted rgba(31,29,26,.4);cursor:help;outline:none}
+.pt:hover,.pt:focus-visible,.pt.show{background:#fff1a8;border-radius:4px}
+.tip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:max-content;max-width:min(250px,70vw);background:var(--pen);color:var(--paper);font-family:var(--f-body);font-size:.85rem;line-height:1.4;padding:8px 11px;border-radius:10px;z-index:20;text-align:left;box-shadow:0 6px 16px rgba(0,0,0,.25);pointer-events:none}
+.sideL .tip{left:0;transform:none}.sideR .tip{left:auto;right:0;transform:none}
+.pt:hover .tip,.pt:focus-visible .tip,.pt.show .tip,.chip.ok:hover .tip{display:block}
+.slot{display:inline-flex;align-items:center;justify-content:center;min-width:150px;min-height:36px;border:2px dashed rgba(31,29,26,.45);border-radius:12px;padding:2px;background:rgba(255,255,255,.45);transition:background .15s}
+.slot.over{background:#fff1a8;border-color:var(--pen)}
+.slot.empty{border-color:#d22f3c;background:#fde3e5}
+.chip{position:relative;display:inline-block;font-family:"Patrick Hand",cursive;font-size:1.02rem;color:#1f1d1a;background:#fffdf7;border:2px solid #1f1d1a;border-radius:10px 14px 9px 13px;padding:3px 11px;box-shadow:2px 2px 0 #1f1d1a;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.chip .tip{--pen:#1f1d1a;--paper:#f8f3ea}
+.chip.sel{background:#fff1a8;transform:rotate(-2deg)}
+.chip.dragging{opacity:.35}
+.chip.ok{background:#c4f0c8;border-color:#14894b;box-shadow:2px 2px 0 #14894b}
+.chip.ok::after{content:" ✓";color:#14894b;font-weight:700}
+.chip.ko{background:#ffd3d6;border-color:#d22f3c;box-shadow:2px 2px 0 #d22f3c}
+.chip.ko::after{content:" ✗";color:#d22f3c;font-weight:700}
+.chip.ghost{position:fixed;z-index:100;pointer-events:none;transform:translate(-50%,-60%) rotate(-3deg);box-shadow:4px 6px 0 #1f1d1a}
+.dock{position:sticky;bottom:0;z-index:6;background:var(--surface);border-radius:18px;box-shadow:0 -4px 18px rgba(28,32,66,.12);padding:14px 16px;display:grid;gap:10px}
+.dock-top{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
+.note2{font-size:.85rem;color:var(--muted)}
+.bank{display:flex;flex-wrap:wrap;gap:10px;min-height:44px;max-height:30vh;overflow:auto;padding:10px;border-radius:12px;background:#f8f3ea;border:2px dashed var(--line)}
+.dock-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pbtn{border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:6px 14px;font-weight:800;font-size:.9rem}
+.pbtn.main{background:var(--iv);border-color:var(--iv);color:#fff}
+.mscore{font-weight:700}
+@media (max-width:900px){
+  .pgrid{grid-template-columns:minmax(0,1fr);grid-template-areas:"c" "tl" "tr" "ml" "mr" "bl" "br";row-gap:26px}
+  .arrowWrap{position:static;margin:0 auto 4px;display:block;width:56px;height:36px}
+  .arrowWrap svg{transform:rotate(90deg)}
+  .sideL .tip,.sideR .tip{left:50%;right:auto;transform:translateX(-50%)}
+  .paper{padding:22px 16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;-webkit-text-size-adjust:100%}
+img{max-width:100%}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="band">
+        <h1>Dossier patient &amp; <span>identitovigilance</span></h1>
+    <div class="idline">
+            <span class="tag dm">14 notions · Dossier médical</span>
+      <span class="tag iv">8 notions · Identitovigilance</span>
+          </div>
+  </header>
+
+  <div class="layout">
+    <main>
+      <nav class="tabs" role="tablist">
+        <button class="tab" role="tab" data-tab="fiches"><span class="dot" style="background:var(--dm)"></span>Fiches</button>
+        <button class="tab" role="tab" data-tab="cartes"><span class="dot" style="background:var(--sama)"></span>Cartes mentales</button>
+        <button class="tab" role="tab" data-tab="quiz"><span class="dot" style="background:var(--iv)"></span>Quiz</button>
+      </nav>
+
+      <section class="panel" id="p-fiches" role="tabpanel">
+        <div class="toolbar">
+          <div class="seg" id="ficheFilter"><button data-f="all" class="on">Tout</button><button data-f="dm">Dossier médical</button><button data-f="iv">Identitovigilance</button><button data-f="todo">Pas encore maîtrisé</button></div>
+          <div class="legend-c"><span class="l1">Vert : mot défini</span><span class="l2">Rouge : terminologie</span></div>
+        </div>
+        <div id="fichesWrap" class="panel"></div>
+      </section>
+
+      <section class="panel" id="p-cartes" role="tabpanel" hidden>
+        <div class="toolbar">
+          <div class="seg" id="mmPick"><button data-m="dm">Dossier médical</button><button data-m="iv">Identitovigilance</button><button data-m="sama">Métier de SAMA</button></div>
+          <div class="seg" id="mmMode"><button data-v="lire">Lire</button><button data-v="completer">Compléter</button></div>
+        </div>
+        <p class="intro" style="margin-top:-6px">Mode <b>Lire</b> : passe la souris (ou touche) un mot souligné pour voir le détail. Mode <b>Compléter</b> : replace les étiquettes dans les bonnes branches, puis clique sur Corriger.</p>
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" fill="#f8f3ea"/><line x1="0" y1="0" x2="0" y2="5" stroke="#1f1d1a" stroke-width="1.7"/></pattern></defs></svg>
+        <div id="paperWrap"></div>
+      </section>
+
+      <section class="panel" id="p-quiz" role="tabpanel" hidden>
+        <div class="qbox" id="quizBox"></div>
+      </section>
+    </main>
+
+    <aside class="side" id="side" aria-label="Checklist de révision">
+      <div class="side-head">
+        <div class="ring"><svg viewBox="0 0 58 58" aria-hidden="true"><circle cx="29" cy="29" r="24" fill="none" stroke="var(--surface2)" stroke-width="7"/><circle id="ringArc" cx="29" cy="29" r="24" fill="none" stroke="var(--ok)" stroke-width="7" stroke-linecap="round" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg><b id="ringPct">0%</b></div>
+        <div><h2>Ma checklist</h2><div class="sub" id="sideSub">0 / 22 maîtrisées</div></div>
+        <button class="closeSide" id="closeSide" aria-label="Fermer la checklist">✕</button>
+      </div>
+      <div class="bar" id="bar"><span style="background:var(--ok)"></span><span style="background:var(--sun)"></span></div>
+      <div class="legend"><span><i style="background:var(--ok)"></i>Maîtrisé</span><span><i style="background:var(--sun)"></i>En cours</span><span><i style="background:var(--ko)"></i>Raté au quiz</span></div>
+      <div id="clWrap"></div>
+      <div class="side-foot">
+        <span>Clique sur une case : À voir → En cours → Maîtrisé. Clique sur une notion pour ouvrir sa fiche. Progression gardée dans ce navigateur.</span>
+        <button id="resetCl">Remettre à zéro</button>
+      </div>
+    </aside>
+  </div>
+</div>
+<div class="scrim" id="scrim"></div>
+<button class="fab" id="fab">Checklist · <span id="fabN">0/22</span></button>
+
+<script>
+/* Balises : [[mot défini]] = vert · {{terminologie}} = rouge · **gras** */
+const N = [
+ {id:"dm1",b:"dm",t:"Les deux modes de conservation",
+  lead:"Il existe deux façons de conserver les dossiers médicaux des patients :",
+  li:["[[Dossier matérialisé]] : dossier conservé sur support **papier**.","[[Dossier dématérialisé]] : dossier conservé sur support **numérique** (dossier informatisé).","Le contenu est **exactement le même** sur les deux supports.","La {{loi Kouchner}} du **4 mars 2002** impose un {{dossier unique}} pour chaque patient."]},
+ {id:"dm2",b:"dm",t:"Le contenu du dossier patient",
+  lead:"[[Dossier patient]] : ensemble des documents qui rassemblent les informations administratives, médicales et paramédicales d'un patient, de son admission à sa sortie.",
+  li:["[[Partie administrative]] : établie à l'admission (état civil, situation familiale, couverture sociale, médecin traitant, {{personne de confiance}}, {{personne à prévenir}}).","[[Partie sociale]] : présente si le service social est intervenu.","[[Partie soins]] : observations de tous les soignants, examens, bilans, prescriptions, {{compte rendu opératoire}}, consentements.","Structure en 3 parties : **1. admission et séjour**, **2. sortie** ({{lettre de liaison}}, prescription de sortie, fiche de liaison infirmière), **3. informations de tiers**.","Contenu réglementé par le {{décret du 30 mars 1992}} ({{article R.1112-2 du CSP}}).","Il assure la {{traçabilité}} des soins, la coordination entre professionnels et l'information du patient."]},
+ {id:"dm3",b:"dm",t:"Pourquoi un code couleur ?",
+  lead:"[[Code couleur]] : chaque document est identifié par une couleur qui correspond à une fonction.",
+  li:["Il évite les **confusions** et les **mélanges** de documents.","Il évite les **erreurs** et les **pertes**.","Il **facilite le travail** : on repère le bon sous-dossier d'un coup d'œil."]},
+ {id:"dm4",b:"dm",t:"Les pièces demandées",
+  lead:"Pour constituer le dossier, on demande au patient :",
+  li:["Une **pièce d'identité avec photo** : {{CNI}}, passeport ou titre de séjour.","La {{carte Vitale}} et/ou l'{{attestation de droits}} de l'Assurance maladie.","La carte de {{mutuelle}}, ou une attestation {{CSS}} (Complémentaire santé solidaire) ou {{AME}} (Aide médicale de l'État).","En cas d'{{accident du travail}} ou de {{maladie professionnelle}} : la feuille AT/MP remise par l'employeur ou la caisse.","Pour les pensionnés de guerre ({{article L.115}}) : le carnet de soins gratuits.","**Pour un mineur** : les pièces d'identité des deux parents et le {{livret de famille}} ou la décision de justice (parents séparés, famille monoparentale)."]},
+ {id:"dm5",b:"dm",t:"Les qualités pour bien tenir le dossier",
+  lead:"[[Tenue du dossier]] : chaque pièce est **datée**, **signée** et porte l'identité du patient et celle du professionnel qui l'a produite ({{article R.1112-3 du CSP}}).",
+  li:["Qualités nécessaires : **rigueur**, **organisation**, **qualité**, {{traçabilité}}.","**Objectivité des écrits** et **bonne logistique**.","**Archivage sécurisé** et **confidentialité**.","[[Traçabilité]] : pouvoir retrouver qui a fait quoi, et quand.","Une bonne tenue garantit la **continuité**, la **sécurité** et l'**efficacité** des soins."]},
+ {id:"dm6",b:"dm",t:"Qui est responsable de la conservation ?",
+  lead:"[[Responsable de la conservation]] : le **directeur de l'établissement**, ou le **médecin** s'il exerce en cabinet libéral.",
+  li:["Il sécurise les données. Le dossier informatisé est confié à un {{hébergeur de données de santé agréé}}.","[[CNIL]] : Commission Nationale de l'Informatique et des Libertés. Elle informe, accompagne, contrôle et sanctionne.","[[RGPD]] : Règlement Général sur la Protection des Données, en application depuis le **25 mai 2018**.","La **propriété** du dossier n'est pas définie : il n'appartient ni au patient ni à l'établissement.","Un médecin libéral qui cesse son activité reste responsable de ses dossiers. Ils ne passent pas automatiquement à son successeur, et il informe le {{conseil départemental de l'Ordre des médecins}}."]},
+ {id:"dm7",b:"dm",t:"Qui peut consulter le dossier ?",
+  lead:"Peuvent consulter le dossier :",
+  li:["**Le patient**, directement, par un [[mandataire]] (personne qu'il désigne par {{procuration écrite}}) ou par un {{médecin intermédiaire}}.","Les titulaires de l'{{autorité parentale}} pour un **mineur**. Le mineur n'a pas accès lui-même et peut s'opposer à certaines communications.","Le [[représentant légal]] d'un majeur protégé : la personne chargée de la {{tutelle}} ou de l'{{habilitation familiale}}.","Les [[ayants droit]] d'un patient décédé (héritiers, conjoint, concubin, partenaire de {{PACS}}), sauf si le défunt s'y est opposé de son vivant."],
+  tcap:"Patient décédé : 4 conditions",
+  table:[["1","Le décès du patient"],["2","L'absence de volonté contraire du défunt"],["3","La qualité de bénéficiaire : ayant droit, concubin, partenaire de PACS"],["4","Un motif : connaître les causes du décès, faire valoir un droit, défendre la mémoire du défunt, examen génétique familial"]]},
+ {id:"dm8",b:"dm",t:"La durée de conservation",
+  lead:"[[Durée de conservation]] : temps pendant lequel le dossier doit être gardé avant de pouvoir être détruit.",
+  table:[["20 ans","Règle générale, à partir du dernier séjour"],["10 ans","À partir du décès du patient"],["28 ans","Patient de moins de 8 ans : jusqu'à ses 28 ans"],["30 ans","Dossiers de {{transfusion sanguine}}"],["10 ans","{{DMP}}, après la clôture du dossier"]],
+  li:["Médecin libéral : **pas de délai fixé par la loi**, mais il est incité à appliquer les mêmes durées."]},
+ {id:"dm9",b:"dm",t:"Les modalités d'accès",
+  lead:"Pour accéder au dossier, le demandeur doit :",
+  li:["Envoyer un courrier en {{recommandé avec accusé de réception}} au **directeur** de l'établissement.","Justifier de son **identité** (copie d'une pièce d'identité) et, si besoin, de sa qualité d'ayant droit, de représentant légal ou de parent.","Choisir le **mode de communication** : envoi à domicile, consultation sur place ou envoi au médecin intermédiaire.","La **consultation sur place est gratuite**. Seules les copies peuvent être facturées (A4 0,20 €, A3 0,36 €, radio 3,60 €, CD 2,75 €, plus le recommandé).","{{CJUE}} (Cour de justice de l'Union européenne), **26 octobre 2023** : la **première copie est gratuite**, sans avoir à justifier la demande."]},
+ {id:"dm10",b:"dm",t:"Les délais de transmission",
+  lead:"[[Délai de réflexion]] : temps minimum de **48 heures** à respecter avant de communiquer le dossier.",
+  table:[["48 h","Au plus tôt : délai de réflexion"],["8 jours","Au plus tard, pour des informations de moins de 5 ans"],["2 mois","Au plus tard, pour des informations de plus de 5 ans"]],
+  li:["La limite entre les deux délais : des informations de **plus ou moins 5 ans**."]},
+ {id:"dm11",b:"dm",t:"Communicable ou non ?",
+  lead:"Le patient a un {{droit d'accès direct}} à son dossier depuis la {{loi du 4 mars 2002}}.",
+  li:["[[Informations communicables]] : les informations **formalisées** (comptes rendus, courriers de consultation, prescriptions, résultats), c'est-à-dire les parties 1 et 2 du dossier.","[[Informations non communicables]] : celles recueillies auprès de {{tiers}} qui n'interviennent pas dans la prise en charge…","…celles qui **concernent un tel tiers** (membre de la famille, assistant de service social)…","…et les [[notes personnelles]] du médecin : documents de travail (hypothèses, brouillons) qui ne servent ni au diagnostic ni au traitement."]},
+ {id:"dm12",b:"dm",t:"L'élimination physique",
+  lead:"[[Élimination physique]] : destruction du dossier une fois la durée de conservation terminée.",
+  li:["Possible à l'issue du délai de **20 ans**.","Décision du **directeur** de l'établissement…","…après avis du médecin responsable du [[DIM]] : Département de l'Information Médicale."]},
+ {id:"dm13",b:"dm",t:"Les recours en cas de refus",
+  lead:"Si l'on refuse de communiquer le dossier au demandeur :",
+  table:[["Public","Saisir la {{CADA}} dans les **2 mois** qui suivent le refus ou l'absence de réponse"],["CADA","Elle rend son avis en **1 mois**"],["Refus maintenu","{{Recours pour excès de pouvoir}} devant le {{tribunal administratif}}"],["Libéral","{{Conseil départemental de l'Ordre}} ou tribunal"],["Sans réponse","Le patient peut saisir la {{CNIL}}"]],
+  li:["[[CADA]] : Commission d'Accès aux Documents Administratifs.","[[Recours pour excès de pouvoir]] : demande au juge administratif d'annuler la décision de refus."]},
+ {id:"dm14",b:"dm",t:"Le DMP",
+  lead:"[[DMP]] (Dossier Médical Partagé) : carnet de santé numérique du patient. Il rassemble les informations du médecin traitant, des spécialistes, des laboratoires et des établissements.",
+  li:["Géré par l'{{Assurance maladie}}, **non obligatoire**.","Conservé **10 ans après la clôture**.","Seuls les professionnels **autorisés par le patient** y accèdent.","[[Mon espace santé]] : service public numérique qui contient le DMP et une {{messagerie sécurisée}}."]},
+ {id:"iv1",b:"iv",t:"Définition de l'identitovigilance",
+  lead:"[[Identitovigilance]] : ensemble des mesures mises en œuvre pour fiabiliser l'identification de l'usager, afin de sécuriser ses données de santé à toutes les étapes de sa prise en charge.",
+  li:["Objectifs : améliorer le processus d'identification, **prévenir le risque d'erreur**, fiabiliser l'identification du patient et de ses documents.","L'{{événement indésirable}} le plus fréquent : **des soins administrés au mauvais patient**.","Autres risques : retard de prise en charge, erreur de diagnostic, erreur thérapeutique, {{collision}}, {{doublons}}, erreur de facturation.","C'est la **première étape obligatoire** : sans elle, l'{{INS}} ne peut pas être qualifiée.","Objectif final : **la bonne identité, au bon moment, pour le bon patient**."]},
+ {id:"iv2",b:"iv",t:"L'INS",
+  lead:"[[INS]] (Identité Nationale de Santé) : identité unique et pérenne du patient, partagée par tous les acteurs de soin.",
+  li:["Obligatoire depuis le **1er janvier 2021** pour référencer les données de santé.","[[Matricule INS]] : le numéro de l'INS, c'est-à-dire le {{NIR}} ou le {{NIA}}.","[[Traits INS]] : les **5 traits** de l'INS, à savoir nom de naissance, prénom(s) de naissance, date de naissance, sexe et code {{INSEE}} du lieu de naissance.","[[NIR]] : Numéro d'Inscription au Répertoire, le numéro de sécurité sociale définitif.","[[NIA]] : Numéro Identifiant d'Attente, un numéro provisoire en attendant un NIR.","L'identité est d'abord validée selon le {{RNIV}} (Référentiel National d'Identitovigilance). L'INS est ensuite récupérée ou vérifiée par le {{téléservice INSi}}.","Pour un enfant, le numéro de sécu utilisé pour les remboursements est souvent celui d'un parent : son matricule INS est alors différent."]},
+ {id:"iv3",b:"iv",t:"Les acteurs",
+  lead:"[[Acteurs de l'identitovigilance]] : toutes les personnes qui participent à la bonne identification du patient.",
+  li:["**Le patient**, sa famille ou sa {{personne de confiance}} : premiers acteurs de la sécurité du patient. Ils fournissent les bons éléments d'identité et vérifient que le patient est identifié de la même façon partout.","**Les professionnels de santé** : ils respectent les bonnes pratiques d'identification et vérifient les bons éléments (dossier, prescription, résultats) avant toute décision ou tout soin.","**Le secrétariat** : en première ligne à l'accueil, c'est là que l'identité est créée et contrôlée."]},
+ {id:"iv4",b:"iv",t:"Les traits d'identité",
+  lead:"[[Traits]] : caractéristiques du patient qui constituent son identité.",
+  table:[["Stricts","Nom de famille, nom marital, prénom, sexe, date de naissance (système {{NPDS}})"],["Étendus","Adresse, lieu de naissance, téléphone… pour compléter et choisir le bon patient dans une liste"],["Complémentaires","Groupe sanguin, pathologie… confidentiels, réservés aux professionnels habilités en cas de doute persistant"]],
+  li:["[[Identité du patient]] : représentation d'une personne dans le système d'information, composée d'un identifiant et d'un profil de traits.","[[Profil]] : ensemble des traits.","{{NPDS}} : Nom, Prénom, Date de naissance, Sexe."]},
+ {id:"iv5",b:"iv",t:"L'IPP",
+  lead:"[[IPP]] (Identifiant Permanent du Patient) : numéro unique attribué de façon définitive au patient dès son premier contact avec l'établissement ou le cabinet.",
+  li:["[[Identifiant]] : numéro unique qui désigne un patient.","L'IPP ne change pas d'un séjour à l'autre.","Il est **propre à l'établissement**. L'{{INS}}, elle, est **nationale**."]},
+ {id:"iv6",b:"iv",t:"Les règles graphiques de saisie",
+  lead:"[[Règles graphiques de saisie]] : façon d'écrire l'identité dans le logiciel pour qu'une même personne soit toujours saisie de la même manière.",
+  li:["NOM, NOM DE NAISSANCE et PRÉNOM en **MAJUSCULES**.","**Pas d'accent** ni de {{caractères diacritiques}} (à â ä é è ê ë î ï ô ö ù û ü ç).","**Pas d'apostrophe** : on la remplace par un espace.","**Pas de tiret** : un nom ou prénom composé est séparé par un espace.","La {{particule}} (de, d', le, l') est en majuscules et séparée du nom par **un seul espace**.","**Pas d'abréviation**."],
+  ex:"Hélène-Marie d'Arcy → <b>HELENE MARIE</b> · <b>D ARCY</b><br><s>Hélène-Marie</s> · <s>D'ARCY</s> · <s>STE CROIX</s>"},
+ {id:"iv7",b:"iv",t:"Les dispositifs pris en compte",
+  lead:"[[Dispositif d'identification à haut niveau de confiance]] : pièce officielle qui sert à contrôler la cohérence des traits saisis.",
+  li:["La {{carte nationale d'identité}} (CNI).","Le **passeport**.","Le **titre de séjour**.","Ce contrôle donne à l'{{identité numérique}} le **plus haut niveau de confiance**.","La {{carte Vitale}} prouve les droits, pas l'identité."]},
+ {id:"iv8",b:"iv",t:"Les erreurs les plus courantes",
+  lead:"[[Anomalie d'identité]] : situation où l'unicité de l'identifiant n'est plus respectée dans le {{SIH}} (Système d'Information Hospitalier).",
+  li:["[[Doublon]] : deux identifiants (ou plus) pour **une même personne**.","[[Collision]] : un même identifiant attribué à **deux personnes différentes** (ou plus).","Autres erreurs : fautes de saisie, {{homonymes}}, identité non vérifiée avec une pièce.","Conséquences : soins au mauvais patient, informations mélangées, erreur de facturation."]}
+];
+
+const Q = [
+ ["dm1","Quels sont les deux modes de conservation du dossier patient ?",["Matérialisé (papier) et dématérialisé (numérique)","Centralisé et décentralisé","Administratif et médical","Provisoire et définitif"],"Papier ou numérique, avec exactement le même contenu."],
+ ["dm1","Le dossier numérique d'un patient contient-il les mêmes informations que son dossier papier ?",["Oui, le contenu est identique","Non, le numérique en contient moins","Non, le papier ne contient que l'administratif","Cela dépend du service"],"La loi Kouchner (4 mars 2002) impose un dossier unique par patient, quel que soit le support."],
+ ["dm2","Dans quelle partie du dossier trouve-t-on la personne de confiance et la personne à prévenir ?",["La partie administrative","La partie soins","La partie sociale","La partie « tiers »"],"Elles sont notées à l'admission, avec l'état civil et la couverture sociale."],
+ ["dm2","La lettre de liaison remise à la sortie fait partie…",["des informations établies à la fin du séjour (partie 2)","des informations de tiers (partie 3)","du dossier administratif uniquement","des notes personnelles du médecin"],"Partie 2 = sortie : lettre de liaison, prescription de sortie, modalités de sortie, fiche de liaison infirmière."],
+ ["dm2","Quel texte réglemente le contenu du dossier d'hospitalisation ?",["Le décret du 30 mars 1992","Le RGPD de 2018","Le décret-loi de 1943","L'arrêté INS de 2021"],"Le décret du 30 mars 1992, repris à l'article R.1112-2 du CSP."],
+ ["dm3","Pourquoi utilise-t-on un code couleur pour les dossiers et sous-dossiers ?",["Pour éviter confusions, mélanges, erreurs et pertes de documents","Pour indiquer la gravité de la maladie","Pour distinguer les patients selon leur mutuelle","Pour rendre le dossier plus agréable"],"Chaque couleur correspond à une fonction, on retrouve vite le bon document."],
+ ["dm4","Pour un patient mineur, que faut-il en plus ?",["Les pièces d'identité des deux parents et le livret de famille (ou la décision de justice)","Seulement le carnet de santé","Un certificat de scolarité","Rien de plus"],"Le livret de famille ou la décision du juge sert pour les parents séparés ou les familles monoparentales."],
+ ["dm4","Quel document est demandé en cas d'accident du travail ?",["La feuille d'accident du travail ou de maladie professionnelle","Le contrat de travail","Un bulletin de salaire","La carte professionnelle"],"Elle est remise par l'employeur ou la caisse d'Assurance maladie."],
+ ["dm4","Laquelle de ces pièces n'est PAS demandée pour constituer le dossier ?",["Un avis d'imposition","Une pièce d'identité avec photo","La carte Vitale ou l'attestation de droits","La carte de mutuelle, CSS ou AME"],"Identité, droits Assurance maladie et complémentaire : pas de document fiscal."],
+ ["dm5","Que doit comporter chaque pièce du dossier ?",["La date, une signature, l'identité du patient et celle du professionnel","Seulement le nom du patient","Le tampon du service","Le numéro de chambre"],"Article R.1112-3 du CSP."],
+ ["dm5","Laquelle n'est PAS une qualité de bonne tenue du dossier ?",["La subjectivité des écrits","La traçabilité","La confidentialité","La rigueur"],"On attend au contraire l'objectivité des écrits."],
+ ["dm6","À l'hôpital, qui est responsable de la conservation du dossier ?",["Le directeur de l'établissement","Le patient","La secrétaire médicale","L'Assurance maladie"],"En cabinet libéral, c'est le médecin lui-même."],
+ ["dm6","À qui appartient le dossier médical ?",["Sa propriété n'est pas définie : ni au patient, ni à l'établissement","Au patient","À l'établissement","Au médecin traitant"],"Point piège du cours : la propriété n'est pas définie."],
+ ["dm6","Où doit être stocké un dossier informatisé ?",["Chez un hébergeur de données de santé agréé","Sur la clé USB du médecin","Dans une messagerie personnelle","Chez n'importe quel service de cloud"],"La sécurisation des données relève du responsable de la conservation."],
+ ["dm6","Un médecin libéral cesse son activité. Que deviennent ses dossiers ?",["Il en reste responsable et informe le conseil départemental de l'Ordre de leur lieu de conservation","Ils passent automatiquement à son successeur","Ils sont détruits immédiatement","Ils sont envoyés à la CNIL"],"Le patient peut demander que son dossier soit transmis au médecin de son choix."],
+ ["dm7","Un patient mineur peut-il accéder lui-même à son dossier ?",["Non, ce sont les titulaires de l'autorité parentale","Oui, dès 12 ans","Oui, avec sa carte Vitale","Oui, s'il est accompagné"],"Le mineur peut en revanche s'opposer à ce que certaines informations soient communiquées à ses parents."],
+ ["dm7","Qui peut accéder au dossier d'un patient décédé ?",["Ses ayants droit, concubin ou partenaire de PACS, sauf opposition du défunt","N'importe quel membre de la famille","Personne","Uniquement le notaire"],"Il faut aussi un motif : causes du décès, faire valoir un droit, défendre sa mémoire, examen génétique."],
+ ["dm7","Lequel n'est PAS un motif valable pour un ayant droit ?",["La simple curiosité sur la vie du défunt","Connaître les causes du décès","Défendre la mémoire du défunt","Faire valoir un droit"],"Les 4 conditions : décès, pas d'opposition, qualité d'ayant droit, motif valable."],
+ ["dm7","Par qui le patient peut-il se faire représenter pour accéder à son dossier ?",["Un mandataire avec procuration écrite, ou un médecin intermédiaire","Son employeur","Son assureur","Un voisin, sans document"],"Le patient peut aussi y accéder directement."],
+ ["dm8","Quelle est la durée de conservation en règle générale ?",["20 ans après le dernier séjour","10 ans","5 ans","30 ans"],"20 ans est la règle de base."],
+ ["dm8","Le patient est décédé. Combien de temps garde-t-on son dossier ?",["10 ans après le décès","20 ans","30 ans","5 ans"],"10 ans à compter de la date du décès."],
+ ["dm8","Combien de temps garde-t-on un dossier de transfusion sanguine ?",["30 ans","20 ans","10 ans","À vie"],"Le délai le plus long de la liste."],
+ ["dm8","Un enfant de 5 ans est hospitalisé. Jusqu'à quand garde-t-on son dossier ?",["Jusqu'à ses 28 ans","Jusqu'à ses 18 ans","Jusqu'à ses 25 ans","10 ans"],"Patient de moins de 8 ans : jusqu'à ses 28 ans."],
+ ["dm9","Comment le demandeur doit-il faire sa demande d'accès ?",["Par courrier recommandé avec accusé de réception au directeur","Par téléphone","Oralement à l'accueil","Par SMS au médecin"],"Avec une copie de sa pièce d'identité et le mode de communication choisi."],
+ ["dm9","La consultation du dossier sur place est…",["Gratuite","Facturée 0,20 € la page","Facturée 3,60 €","Facturée 2,75 €"],"Seules les copies et l'envoi peuvent être facturés."],
+ ["dm9","D'après la CJUE (26 octobre 2023), la première copie du dossier est…",["Gratuite, sans avoir à justifier la demande","Payante","Réservée aux avocats","Interdite"],"Cette décision s'applique à tous les États membres."],
+ ["dm10","Informations de moins de 5 ans : quel est le délai maximum de communication ?",["8 jours","48 heures","2 mois","1 mois"],"Après un délai de réflexion de 48 h minimum."],
+ ["dm10","Quel est le délai de réflexion minimum avant la communication ?",["48 heures","24 heures","8 jours","1 semaine"],"Le dossier ne peut pas être communiqué avant 48 h."],
+ ["dm10","Informations de plus de 5 ans : quel est le délai maximum ?",["2 mois","8 jours","6 mois","1 an"],"La charnière est à 5 ans."],
+ ["dm11","Laquelle de ces informations n'est PAS communicable ?",["Une information recueillie auprès d'un tiers qui n'intervient pas dans la prise en charge","Le compte rendu opératoire","Une prescription","La lettre de liaison"],"Ce qui vient de tiers (ou les concerne) est exclu."],
+ ["dm11","Les notes personnelles du médecin (hypothèses, brouillons)…",["ne sont pas communicables","sont toujours communicables","deviennent communicables après 5 ans","sont communicables au conjoint"],"Elles ne contribuent pas au diagnostic ni au traitement."],
+ ["dm12","Qui décide de l'élimination d'un dossier ?",["Le directeur, après avis du médecin responsable du DIM","La secrétaire médicale","Le patient","La CNIL"],"DIM = Département de l'Information Médicale."],
+ ["dm12","À partir de quand peut-on éliminer un dossier (règle générale) ?",["À l'issue du délai de 20 ans","Après 5 ans","Dès la sortie du patient","Jamais"],"La durée de conservation doit être terminée."],
+ ["dm13","Refus de communication dans un établissement public : qui saisir ?",["La CADA","Le conseil de l'Ordre","La CNIL","L'Assurance maladie"],"Commission d'Accès aux Documents Administratifs."],
+ ["dm13","Dans quel délai saisir la CADA ?",["2 mois après le refus ou l'absence de réponse","8 jours","1 mois","1 an"],"La CADA rend ensuite son avis en 1 mois."],
+ ["dm13","L'établissement maintient son refus malgré l'avis de la CADA. Que faire ?",["Un recours pour excès de pouvoir devant le tribunal administratif","Rien","Saisir l'Assurance maladie","Écrire au ministre"],"Dernière étape du recours dans le public."],
+ ["dm13","Un médecin libéral refuse de communiquer le dossier. Vers qui se tourner ?",["Le conseil départemental de l'Ordre (ou le tribunal), puis la CNIL s'il ne répond pas","La CADA","Le tribunal administratif obligatoirement","La mairie"],"La CADA ne concerne que le public."],
+ ["dm14","Le DMP est…",["Le carnet de santé numérique, géré par l'Assurance maladie, non obligatoire","Obligatoire pour tous","Géré par chaque hôpital","Ouvert à tout professionnel, sans autorisation"],"Seuls les professionnels autorisés par le patient y accèdent."],
+ ["dm14","Combien de temps le DMP est-il conservé ?",["10 ans après sa clôture","20 ans","30 ans","À vie"],"Différent du dossier hospitalier (20 ans)."],
+ ["dm14","Où retrouve-t-on le DMP aujourd'hui ?",["Dans Mon espace santé","Dans la carte Vitale","Sur le site de l'hôpital","Chez la mutuelle"],"Mon espace santé ajoute aussi une messagerie sécurisée."],
+ ["iv1","Quelle est la bonne définition de l'identitovigilance ?",["L'ensemble des mesures pour fiabiliser l'identification de l'usager et sécuriser ses données de santé à toutes les étapes","Le contrôle des factures du patient","La surveillance des visiteurs","La vérification des droits Sécurité sociale"],"Elle concerne toute la prise en charge, pas seulement l'accueil."],
+ ["iv1","Quel est l'événement indésirable le plus fréquent lié à une mauvaise identification ?",["Des soins administrés au mauvais patient","Une erreur de facturation","Un retard de rendez-vous","La perte d'une carte Vitale"],"C'est le risque principal cité dans le cours."],
+ ["iv1","Quel est l'objectif final de l'identitovigilance ?",["La bonne identité, au bon moment, pour le bon patient","Réduire le temps d'accueil","Supprimer le papier","Contrôler les mutuelles"],"Pour des soins sûrs et un parcours fluide."],
+ ["iv2","Que signifie INS ?",["Identité Nationale de Santé","Identifiant National Sécurisé","Index National des Soins","Inscription Nationale Sanitaire"],"Un outil national standardisé d'identification."],
+ ["iv2","Depuis quand l'INS est-elle obligatoire ?",["1er janvier 2021","4 mars 2002","25 mai 2018","1er septembre 2025"],"Obligatoire pour référencer les données de santé."],
+ ["iv2","L'INS est composée d'un matricule et de combien de traits ?",["5","3","4","7"],"Nom et prénom(s) de naissance, date de naissance, sexe, code INSEE du lieu de naissance."],
+ ["iv2","Lequel n'est PAS un trait INS ?",["L'adresse postale","Le nom de naissance","Le code INSEE du lieu de naissance","Le sexe"],"L'adresse est un trait étendu."],
+ ["iv2","À quoi correspond le matricule INS ?",["Au NIR ou au NIA","À l'IPP","Au numéro de mutuelle","Au numéro FINESS"],"NIR = n° de sécu définitif ; NIA = n° provisoire."],
+ ["iv2","Que signifie NIA ?",["Numéro Identifiant d'Attente : un numéro provisoire","Numéro d'Identité Administrative","Numéro Interne d'Admission","Nouvel Identifiant Assuré"],"Pour les personnes qui n'ont pas encore de NIR définitif."],
+ ["iv2","Comment récupère-t-on ou vérifie-t-on l'INS ?",["Par le téléservice INSi, après validation de l'identité selon le RNIV","En appelant la CPAM","Sur la carte de mutuelle","Sur Ameli"],"L'identitovigilance d'abord, l'INS ensuite."],
+ ["iv3","Qui est le premier acteur de sa propre sécurité ?",["Le patient (avec sa famille ou sa personne de confiance)","Le directeur","La CNIL","Le pharmacien"],"Il fournit les bons éléments et vérifie qu'il est identifié de la même façon partout."],
+ ["iv3","Que doit faire un professionnel avant tout acte de soin ?",["Vérifier qu'il utilise les bons éléments : dossier, prescription, résultats","Demander la carte de mutuelle","Rien de particulier","Appeler la famille"],"Quelle que soit sa spécialité ou son mode d'exercice."],
+ ["iv4","Quels sont les traits stricts ?",["Nom de famille, nom marital, prénom, sexe, date de naissance","Adresse et téléphone","Groupe sanguin et pathologie","Profession et employeur"],"Le système le plus connu : NPDS."],
+ ["iv4","Le groupe sanguin est un trait…",["complémentaire","strict","étendu","INS"],"Confidentiel, réservé aux professionnels habilités en cas de doute persistant."],
+ ["iv4","L'adresse et le numéro de téléphone sont des traits…",["étendus","stricts","complémentaires","INS"],"Ils aident à choisir le bon patient dans une liste."],
+ ["iv4","Comment appelle-t-on l'ensemble des traits d'un patient ?",["Le profil","L'IPP","Le matricule","Le dossier"],"Identité = identifiant + profil de traits."],
+ ["iv5","Que signifie IPP ?",["Identifiant Permanent du Patient","Identifiant Provisoire du Patient","Index des Patients Prioritaires","Identité Personnelle Protégée"],"Le numéro unique attribué par l'établissement."],
+ ["iv5","Quand l'IPP est-il attribué ?",["Définitivement, dès le premier contact avec l'établissement","À chaque nouveau séjour","À la sortie","À la naissance, par l'état civil"],"Il ne change pas d'un séjour à l'autre."],
+ ["iv6","Comment saisit-on le nom et le prénom ?",["En MAJUSCULES, sans accent","En minuscules","Avec une majuscule initiale et les accents","Comme le patient le préfère"],"Aucun caractère diacritique n'est autorisé."],
+ ["iv6","D'après ton cours, que fait-on du tiret d'un nom composé ?",["On le remplace par un espace","On le garde","On colle les deux noms","On n'écrit que le premier nom"],"Même règle pour l'apostrophe."],
+ ["iv6","Selon les règles du cours, comment saisir « Hélène d'Arcy » ?",["Nom : D ARCY · Prénom : HELENE","Nom : DARCY · Prénom : Hélène","Nom : D'ARCY · Prénom : HÉLÈNE","Nom : d arcy · Prénom : helene"],"Majuscules, sans accent, apostrophe remplacée par un espace."],
+ ["iv6","Peut-on écrire « STE » pour Sainte ?",["Non, les abréviations sont interdites","Oui, toujours","Oui, seulement pour les prénoms","Oui, si le patient l'accepte"],"On écrit SAINTE en entier."],
+ ["iv7","Quels dispositifs ont un haut niveau de confiance ?",["CNI, passeport, titre de séjour","Carte Vitale, carte de mutuelle, facture","Permis de conduire, carte d'étudiant","Livret de famille, carte de bibliothèque"],"Les 3 pièces citées dans ton cours."],
+ ["iv7","Pourquoi contrôler les traits avec ces pièces ?",["Pour donner à l'identité numérique le plus haut niveau de confiance","Pour calculer les remboursements","Pour remplir le DMP","Pour éviter de saisir l'adresse"],"C'est un contrôle de cohérence."],
+ ["iv8","Qu'est-ce qu'un doublon ?",["Deux identifiants (ou plus) pour une même personne","Un même identifiant pour deux personnes","Deux patients dans la même chambre","Deux rendez-vous à la même heure"],"1 personne, 2 dossiers."],
+ ["iv8","Qu'est-ce qu'une collision ?",["Un même identifiant attribué à deux personnes différentes","Deux identifiants pour une même personne","Une erreur de facturation","Un mauvais classement"],"1 dossier, 2 personnes. Très dangereux : les données de santé se mélangent."],
+ ["iv8","Quand parle-t-on d'anomalie d'identité dans le SIH ?",["Quand l'unicité de l'identifiant n'est plus maintenue","Quand le patient change d'adresse","Quand le dossier est archivé","Quand la carte Vitale est expirée"],"Doublon ou collision."]
+];
+
+/* ============ ÉTAT ============ */
+const LS="sama-revisions-v1";
+let S={st:{},quiz:{},tab:"fiches",map:"dm"};
+try{const raw=localStorage.getItem(LS); if(raw) S=Object.assign(S,JSON.parse(raw));}catch(e){}
+if(!["fiches","cartes","quiz"].includes(S.tab)) S.tab="fiches";
+function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
+const st=id=>S.st[id]||0;
+const STL=["À voir","En cours","Maîtrisé"];
+const byId=Object.fromEntries(N.map(n=>[n.id,n]));
+const fmt=s=>s.replace(/\[\[(.+?)\]\]/g,"<dfn>$1</dfn>").replace(/\{\{(.+?)\}\}/g,'<em class="tm">$1</em>').replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+const idx=n=>N.filter(x=>x.b===n.b).indexOf(n)+1;
+
+/* ============ FICHES ============ */
+function qBadge(id){const r=S.quiz[id]; if(!r) return ""; return r.ok?'<span class="qbadge ok">Quiz : acquis</span>':'<span class="qbadge ko">Quiz : à retravailler</span>';}
+let ficheF="all";
+function renderFiches(){
+  let h="";
+  [["dm","Le dossier médical du patient"],["iv","L'identitovigilance"]].forEach(([b,title])=>{
+    if((ficheF==="dm"||ficheF==="iv")&&ficheF!==b) return;
+    let list=N.filter(n=>n.b===b);
+    if(ficheF==="todo") list=list.filter(n=>st(n.id)<2);
+    if(!list.length) return;
+    h+=`<div class="bloc-title"><h2>${title}</h2><span class="pill">${list.length} fiche${list.length>1?"s":""}</span></div><div class="cards">`;
+    list.forEach(n=>{
+      h+=`<article class="card ${n.b} st${st(n.id)}" id="f-${n.id}"><header><span class="num">${idx(n)}</span><h3>${n.t}</h3></header><div class="body">`;
+      if(n.lead) h+=`<p class="lead">${fmt(n.lead)}</p>`;
+      if(n.table) h+=`<table class="mini-table">${n.tcap?`<caption>${n.tcap}</caption>`:""}<tbody>${n.table.map(r=>`<tr><td>${fmt(r[0])}</td><td>${fmt(r[1])}</td></tr>`).join("")}</tbody></table>`;
+      if(n.li) h+=`<ul>${n.li.map(p=>`<li>${fmt(p)}</li>`).join("")}</ul>`;
+      if(n.ex) h+=`<div class="example">${n.ex}</div>`;
+      h+=`</div><footer><button class="status s${st(n.id)}" data-cycle="${n.id}">${STL[st(n.id)]}</button>${qBadge(n.id)}</footer></article>`;
+    });
+    h+="</div>";
+  });
+  document.getElementById("fichesWrap").innerHTML=h||'<p class="intro">Tout est maîtrisé. Lance un quiz pour le vérifier.</p>';
+}
+
+/* ============ CHECKLIST LATÉRALE ============ */
+function renderChecklist(){
+  document.getElementById("clWrap").innerHTML=[["dm","Dossier médical"],["iv","Identitovigilance"]].map(([b,t])=>`<div class="cl ${b}"><h3>${t}</h3>${N.filter(n=>n.b===b).map(n=>{const q=S.quiz[n.id];return `<div class="row"><button class="chk s${st(n.id)}" data-cycle="${n.id}" aria-label="${n.t} : ${STL[st(n.id)]}">${st(n.id)===2?"✓":st(n.id)===1?"…":""}</button><a href="#f-${n.id}" data-goto="${n.id}">${n.t}</a><span class="qdot ${q?(q.ok?"ok":"ko"):""}" title="${q?(q.ok?"Acquis au dernier quiz":"Raté au dernier quiz"):"Pas encore testé"}"></span></div>`;}).join("")}</div>`).join("");
+  const c=[0,0,0]; N.forEach(n=>c[st(n.id)]++);
+  const bar=document.getElementById("bar").children;
+  bar[0].style.width=(c[2]/N.length*100)+"%"; bar[1].style.width=(c[1]/N.length*100)+"%";
+  const p=Math.round(c[2]/N.length*100);
+  document.getElementById("ringPct").textContent=p+"%";
+  document.getElementById("ringArc").style.strokeDashoffset=150.8-150.8*p/100;
+  document.getElementById("sideSub").textContent=`${c[2]} / ${N.length} maîtrisées · ${c[1]} en cours`;
+  document.getElementById("fabN").textContent=`${c[2]}/${N.length}`;
+}
+function refresh(){renderFiches();renderChecklist();}
+const side=document.getElementById("side"), scrim=document.getElementById("scrim");
+function openSide(o){side.classList.toggle("open",o);scrim.classList.toggle("open",o);}
+document.getElementById("fab").onclick=()=>openSide(true);
+document.getElementById("closeSide").onclick=()=>openSide(false);
+scrim.onclick=()=>openSide(false);
+let resetArmed=false;
+document.getElementById("resetCl").addEventListener("click",function(){
+  if(!resetArmed){resetArmed=true;this.textContent="Clique encore pour confirmer";return;}
+  S.st={};S.quiz={};save();refresh();resetArmed=false;this.textContent="Remettre à zéro";
+});
+
+/* ============ ONGLETS ============ */
+function showTab(t){
+  S.tab=t; save();
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
+  ["fiches","cartes","quiz"].forEach(k=>document.getElementById("p-"+k).hidden=k!==t);
+  if(t==="cartes") drawMap();
+}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+document.addEventListener("click",e=>{
+  const c=e.target.closest("[data-cycle]");
+  if(c){const id=c.dataset.cycle;S.st[id]=(st(id)+1)%3;save();refresh();return;}
+  const g=e.target.closest("[data-goto]");
+  if(g){e.preventDefault();ficheF="all";setSeg();renderFiches();showTab("fiches");openSide(false);const el=document.getElementById("f-"+g.dataset.goto);if(el) el.scrollIntoView({behavior:"smooth",block:"start"});}
+});
+function setSeg(){document.querySelectorAll("#ficheFilter button").forEach(b=>b.classList.toggle("on",b.dataset.f===ficheF));}
+document.querySelectorAll("#ficheFilter button").forEach(b=>b.addEventListener("click",()=>{ficheF=b.dataset.f;setSeg();renderFiches();}));
+
+/* ============ CARTES MENTALES : style « croquis » ============ */
+const MM = {
+ dm:{title:["DOSSIER","PATIENT"],
+  def:"Ensemble de documents qui rassemble les informations administratives, médicales et paramédicales de chaque patient. Il assure la traçabilité des soins, la communication entre professionnels et l'information du patient.",
+  extra:"Sa version numérique partagée : le DMP, dans Mon espace santé.",
+  br:[
+   {h:"Constitution / Contenu",pts:[
+     ["Partie administrative","État civil, couverture sociale, médecin traitant, personne de confiance, personne à prévenir."],
+     ["Partie soins","Observations des soignants, examens, prescriptions, compte rendu opératoire, consentements."],
+     ["Identité, Vitale, mutuelle","Pièces demandées : identité avec photo, carte Vitale ou attestation, mutuelle / CSS / AME. Mineur : identité des 2 parents + livret de famille."],
+     ["Code couleur","Une couleur par fonction : évite confusions, mélanges, erreurs et pertes."]]},
+   {h:"Conservation / Archivage",pts:[
+     ["20 ans","Règle générale, à compter du dernier séjour. Le directeur (ou le médecin libéral) en est responsable."],
+     ["10 ans après le décès","À compter de la date du décès du patient."],
+     ["Jusqu'à 28 ans","Pour un patient de moins de 8 ans."],
+     ["30 ans","Dossiers de transfusion sanguine."]]},
+   {h:"Qui peut consulter ?",pts:[
+     ["Le patient lui-même","Directement, par un mandataire (procuration écrite) ou via un médecin intermédiaire."],
+     ["L'autorité parentale","Les parents d'un patient mineur : le mineur n'a pas accès lui-même."],
+     ["Le représentant légal","Pour un majeur sous tutelle ou habilitation familiale."],
+     ["L'ayant droit","Héritiers, conjoint, concubin, partenaire de PACS d'une personne décédée, sauf opposition du défunt et avec un motif valable."]]},
+   {h:"Accès & délais",pts:[
+     ["Courrier en LRAR","Recommandé avec accusé de réception au directeur, copie de la pièce d'identité, choix du mode de réception. Consultation sur place gratuite."],
+     ["48 h minimum","Délai de réflexion avant toute communication."],
+     ["8 jours","Délai maximum pour des informations de moins de 5 ans."],
+     ["2 mois","Délai maximum pour des informations de plus de 5 ans."]]},
+   {h:"Communicable ?",pts:[
+     ["Oui : le formalisé","Comptes rendus, courriers, prescriptions, résultats (parties 1 et 2 du dossier)."],
+     ["Non : les tiers","Informations venant de tiers extérieurs à la prise en charge, ou les concernant."],
+     ["Non : notes perso","Notes personnelles du médecin : hypothèses, brouillons."]]},
+   {h:"Élimination & recours",pts:[
+     ["Directeur + DIM","Après 20 ans, le directeur décide après avis du médecin du DIM (Département de l'Information Médicale)."],
+     ["CADA","Établissement public : saisir la CADA sous 2 mois, avis en 1 mois, puis tribunal administratif."],
+     ["Ordre / CNIL","Médecin libéral : conseil départemental de l'Ordre ou tribunal ; sans réponse, la CNIL."]]}
+  ]},
+ iv:{title:["IDENTITO-","VIGILANCE"],
+  def:"Ensemble des mesures mises en œuvre pour fiabiliser l'identification de l'usager et sécuriser ses données de santé, à toutes les étapes de sa prise en charge.",
+  extra:"Le bon soin, au bon patient, au bon moment. Le patient est le premier acteur de sa sécurité.",
+  br:[
+   {h:"INS",pts:[
+     ["NIR ou NIA","Le matricule INS. NIR : n° de sécurité sociale définitif. NIA : numéro identifiant d'attente, provisoire."],
+     ["5 traits INS","Nom de naissance, prénom(s) de naissance, date de naissance, sexe, code INSEE du lieu de naissance."],
+     ["Obligatoire depuis 2021","Depuis le 1er janvier 2021. Récupérée via le téléservice INSi, après validation de l'identité selon le RNIV."]]},
+   {h:"Les traits",pts:[
+     ["Stricts","Nom de famille, nom marital, prénom, sexe, date de naissance (NPDS)."],
+     ["Étendus","Adresse, lieu de naissance, téléphone : pour choisir le bon patient dans une liste."],
+     ["Complémentaires","Groupe sanguin, pathologie : confidentiels, réservés aux professionnels habilités."]]},
+   {h:"IPP",pts:[
+     ["Identifiant permanent","Identifiant Permanent du Patient : son numéro unique dans l'établissement."],
+     ["Dès le 1er contact","Attribué définitivement au premier contact, il ne change pas d'un séjour à l'autre."],
+     ["Propre à l'établissement","L'IPP est local ; l'INS est nationale."]]},
+   {h:"Règles de saisie",pts:[
+     ["MAJUSCULES","NOM, NOM DE NAISSANCE et PRÉNOM en majuscules."],
+     ["Sans accent","Aucun caractère diacritique : é, è, ê, ç, ï…"],
+     ["Tiret et apostrophe → espace","Ex. : Hélène-Marie d'Arcy → HELENE MARIE / D ARCY."],
+     ["Pas d'abréviation","On écrit SAINTE, jamais STE."]]},
+   {h:"Pièces fiables",pts:[
+     ["CNI","Carte nationale d'identité : haut niveau de confiance."],
+     ["Passeport","Haut niveau de confiance."],
+     ["Titre de séjour","Haut niveau de confiance. La carte Vitale, elle, ne prouve pas l'identité."]]},
+   {h:"Erreurs courantes",pts:[
+     ["Doublon","Deux identifiants (ou plus) pour une même personne."],
+     ["Collision","Un même identifiant pour deux personnes différentes."],
+     ["Mauvais patient","L'événement indésirable le plus fréquent : des soins administrés au mauvais patient."]]}
+  ]},
+ sama:{title:["MÉTIER","DE SAMA"],
+  def:"Le/la secrétaire assistant(e) médico-administratif(ve) fait fonctionner le secrétariat médical et gère les dossiers des patients.",
+  extra:"Un pivot entre patients, médecins, soignants et institutions.",
+  br:[
+   {h:"Missions",pts:[
+     ["Accueil","Physique et téléphonique : rassurer, renseigner, orienter."],
+     ["Rendez-vous","Plannings, agendas, préadmissions, programme opératoire."],
+     ["Courriers","Saisie des courriers et comptes rendus, mise en forme, prise de notes."],
+     ["Dossier patient","Tenue et mise à jour du dossier, codage de l'activité médicale."]]},
+   {h:"Lieux d'exercice",pts:[
+     ["Hôpitaux","CH, CHR, CHU, EPSM (santé mentale)."],
+     ["Cliniques","Privées ou à but non lucratif, établissements SMR."],
+     ["Cabinets","Cabinets médicaux ou paramédicaux, maisons de santé pluridisciplinaires."],
+     ["Labos & imagerie","Laboratoires d'analyses, centres d'imagerie médicale."]]},
+   {h:"Compétences",pts:[
+     ["Bureautique","Word, Excel et logiciels métier."],
+     ["Orthographe","Un bon niveau, indispensable pour les courriers."],
+     ["Terminologie médicale","Le vocabulaire médical, à l'oral comme à l'écrit."],
+     ["Juger l'urgence","Évaluer le degré d'urgence d'une situation."]]},
+   {h:"Savoir-être",pts:[
+     ["Empathie","Être à l'écoute, rassurer patients et familles."],
+     ["Discrétion","Confidentialité en toutes circonstances."],
+     ["Diplomatie","Aisance relationnelle, faire le lien entre tous."],
+     ["Réactivité","Disponibilité et sens de l'initiative."]]},
+   {h:"Vigilances",pts:[
+     ["Secret professionnel","Secret médical et confidentialité des informations."],
+     ["Identitovigilance","Vérifier l'identité du patient à chaque étape."]]},
+   {h:"Titre pro & évolution",pts:[
+     ["AT1 : accueil","CP1 à CP4 : accueillir, gérer les plannings, prise en charge administrative et financière, transmettre par écrit."],
+     ["AT2 : parcours patient","CP5 à CP7 : suivi du dossier patient, documents médicaux, accès au dossier médical."],
+     ["Concours AMA","Assistant médico-administratif (fonction publique hospitalière), puis coordinateur ou encadrant des secrétariats."]]}
+  ]}
+};
+const AREAS=["tl","tr","ml","mr","bl","br"], ROT={tl:-150,ml:180,bl:150,tr:-30,mr:0,br:30};
+const HL=["#ffe680","#ffc6da","#c4f0c8","#c4e4ff","#e2d4ff","#ffd9ad"];
+const ARROW=`<svg class="arrow" viewBox="0 0 100 62" aria-hidden="true"><path d="M7,27 L59,26 L60,12 L95,34 L59,57 L58,42 L8,43 Z" fill="url(#hatch)" stroke="var(--pen)" stroke-width="2.2" stroke-linejoin="round"/><path d="M2,21 L54,20.5 L55,6 L90,28 L54,51 L53.5,36 L3,37 Z" fill="var(--paper)" stroke="var(--pen)" stroke-width="2.6" stroke-linejoin="round"/></svg>`;
+let mmMode="lire", solved={};
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const esc2=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+function chipHTML(b,k,t,d){return `<span class="chip" data-b="${b}" data-k="${k}" tabindex="0"><span class="ct2">${esc2(t)}</span><span class="tip">${esc2(d)}</span></span>`;}
+function drawMap(){
+  document.querySelectorAll("#mmPick button").forEach(b=>b.classList.toggle("on",b.dataset.m===S.map));
+  document.querySelectorAll("#mmMode button").forEach(b=>b.classList.toggle("on",b.dataset.v===mmMode));
+  const m=MM[S.map], fill=mmMode==="completer";
+  let blocks=m.br.map((b,i)=>{
+    const a=AREAS[i], side=a[1]==="l"?"L":"R";
+    const items=b.pts.map((p,k)=> fill
+      ? `<li><span class="slot" data-b="${i}"></span></li>`
+      : `<li><span class="pt" tabindex="0">${esc2(p[0])}<span class="tip">${esc2(p[1])}</span></span></li>`).join("");
+    return `<div class="blk ${a} side${side}"><div class="arrowWrap" style="--r:${ROT[a]}deg">${ARROW}</div><h3><span style="background:linear-gradient(transparent 55%, ${HL[i]} 55%)">${b.h}</span></h3><ul>${items}</ul></div>`;
+  }).join("");
+  let html=`<div class="paper"><div class="pgrid">${blocks}<div class="ctr"><div class="ttl">${m.title.map(t=>`<span>${t}</span>`).join("")}</div><p>${m.def}</p><p class="ex">${m.extra}</p></div></div></div>`;
+  if(fill){
+    const chips=[]; m.br.forEach((b,i)=>b.pts.forEach((p,k)=>chips.push(chipHTML(i,k,p[0],p[1]))));
+    html+=`<div class="dock"><div class="dock-top"><b>Étiquettes à placer</b><span class="note2">Glisse chaque étiquette dans la bonne branche (ou touche une étiquette puis une case).</span></div><div class="bank" id="bank">${shuf(chips).join("")}</div>
+      <div class="dock-actions"><button class="pbtn main" id="mmCheck">Corriger</button><button class="pbtn" id="mmClear">Retirer les erreurs</button><button class="pbtn" id="mmSol">Voir la solution</button><button class="pbtn" id="mmReset">Recommencer</button><span id="mmScore" class="mscore"></span></div></div>`;
+  }
+  document.getElementById("paperWrap").innerHTML=html;
+  if(fill) wireDnD();
+}
+/* ---- Glisser-déposer (souris + tactile) ---- */
+let sel=null;
+function clearMarks(){document.querySelectorAll(".chip.ok,.chip.ko").forEach(c=>c.classList.remove("ok","ko"));const s=document.getElementById("mmScore");if(s)s.textContent="";document.querySelectorAll(".slot.empty").forEach(x=>x.classList.remove("empty"));}
+function place(chip,target){
+  if(!target) return;
+  const from=chip.parentElement;
+  if(target.classList.contains("slot")){
+    const cur=target.querySelector(".chip");
+    if(cur&&cur!==chip){ (from.classList.contains("slot")||from.id==="bank"?from:document.getElementById("bank")).appendChild(cur); }
+    target.appendChild(chip);
+  } else if(target.id==="bank"){ target.appendChild(chip); }
+  clearMarks();
+}
+function wireDnD(){
+  const bank=document.getElementById("bank");
+  document.querySelectorAll("#paperWrap .chip").forEach(chip=>{
+    chip.addEventListener("pointerdown",e=>{
+      if(e.button>0) return; e.preventDefault();
+      const sx=e.clientX, sy=e.clientY; let ghost=null, over=null;
+      const mv=ev=>{
+        if(!ghost&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>6){
+          ghost=chip.cloneNode(true); ghost.classList.add("ghost"); ghost.classList.remove("sel","ok","ko"); document.body.appendChild(ghost); chip.classList.add("dragging");
+        }
+        if(ghost){ ghost.style.left=ev.clientX+"px"; ghost.style.top=ev.clientY+"px";
+          const el=document.elementFromPoint(ev.clientX,ev.clientY); const t=el&&el.closest(".slot,#bank");
+          if(over&&over!==t) over.classList.remove("over"); over=t; if(t) t.classList.add("over"); }
+      };
+      const up=ev=>{
+        window.removeEventListener("pointermove",mv); window.removeEventListener("pointerup",up);
+        chip.classList.remove("dragging");
+        if(ghost){ ghost.remove(); if(over){over.classList.remove("over"); place(chip,over);} if(sel){sel.classList.remove("sel");sel=null;} }
+        else { if(sel===chip){chip.classList.remove("sel");sel=null;} else { if(sel) sel.classList.remove("sel"); sel=chip; chip.classList.add("sel"); } }
+      };
+      window.addEventListener("pointermove",mv); window.addEventListener("pointerup",up);
+    });
+    chip.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault(); if(sel) sel.classList.remove("sel"); sel=chip; chip.classList.add("sel");}});
+  });
+  document.querySelectorAll("#paperWrap .slot").forEach(s=>{
+    s.tabIndex=0;
+    const go=()=>{ if(sel){ place(sel,s); sel.classList.remove("sel"); sel=null; } };
+    s.addEventListener("click",e=>{ if(e.target.closest(".chip")&&!sel) return; go(); });
+    s.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();go();}});
+  });
+  bank.addEventListener("click",e=>{ if(sel&&!e.target.closest(".chip")){ place(sel,bank); sel.classList.remove("sel"); sel=null; } });
+  document.getElementById("mmCheck").onclick=()=>{
+    let ok=0,tot=0; document.querySelectorAll("#paperWrap .slot").forEach(s=>{tot++; const c=s.querySelector(".chip");
+      if(!c){s.classList.add("empty");return;} const good=c.dataset.b===s.dataset.b; c.classList.toggle("ok",good); c.classList.toggle("ko",!good); if(good) ok++;});
+    const left=document.querySelectorAll("#bank .chip").length;
+    document.getElementById("mmScore").innerHTML=`<b>${ok} / ${tot}</b> ${ok===tot?"Bravo, carte complète !":left?`· encore ${left} étiquette${left>1?"s":""} à placer`:"· corrige les étiquettes en rouge"}`;
+  };
+  document.getElementById("mmClear").onclick=()=>{document.querySelectorAll("#paperWrap .slot .chip.ko").forEach(c=>{c.classList.remove("ko");bank.appendChild(c);});};
+  document.getElementById("mmSol").onclick=()=>{
+    const chips=[...document.querySelectorAll("#paperWrap .chip")];
+    document.querySelectorAll("#paperWrap .slot").forEach(s=>s.innerHTML="");
+    MM[S.map].br.forEach((b,i)=>{const slots=[...document.querySelectorAll(`#paperWrap .slot[data-b="${i}"]`)]; chips.filter(c=>c.dataset.b==String(i)).sort((x,y)=>x.dataset.k-y.dataset.k).forEach((c,k)=>slots[k].appendChild(c));});
+    document.getElementById("mmCheck").click();
+  };
+  document.getElementById("mmReset").onclick=drawMap;
+}
+document.querySelectorAll("#mmPick button").forEach(b=>b.onclick=()=>{S.map=b.dataset.m;save();drawMap();});
+document.querySelectorAll("#mmMode button").forEach(b=>b.onclick=()=>{mmMode=b.dataset.v;drawMap();});
+document.addEventListener("click",e=>{const p=e.target.closest(".pt"); document.querySelectorAll(".pt.show").forEach(x=>{if(x!==p)x.classList.remove("show");}); if(p) p.classList.toggle("show");});
+
+/* ============ QUIZ ============ */
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+let qz=null,qScope="all",qLen=15;
+function quizSetup(){
+  const weak=N.filter(n=>(S.quiz[n.id]&&!S.quiz[n.id].ok)||st(n.id)<2).length;
+  document.getElementById("quizBox").innerHTML=`
+   <div class="qsetup">
+    <h2 style="font-size:1.7rem">Quiz mélangé</h2>
+    <p class="intro">Les questions piochent dans les ${N.length} notions, une notion différente à chaque fois tant que c'est possible. À la fin, tu vois les notions acquises et celles à retravailler, et la checklist se met à jour.</p>
+    <label>Sur quoi ?</label>
+    <div class="seg" id="qs"><button data-v="all">Tout mélangé</button><button data-v="dm">Dossier médical</button><button data-v="iv">Identitovigilance</button><button data-v="weak">Mes points faibles (${weak})</button></div>
+    <label>Combien de questions ?</label>
+    <div class="seg" id="ql"><button data-v="10">10</button><button data-v="15">15</button><button data-v="22">22</button></div>
+    <button class="big" id="go">C'est parti</button>
+   </div>`;
+  const sync=()=>{document.querySelectorAll("#qs button").forEach(b=>b.classList.toggle("on",b.dataset.v===qScope));document.querySelectorAll("#ql button").forEach(b=>b.classList.toggle("on",+b.dataset.v===qLen));};
+  sync();
+  document.querySelectorAll("#qs button").forEach(b=>b.onclick=()=>{qScope=b.dataset.v;sync();});
+  document.querySelectorAll("#ql button").forEach(b=>b.onclick=()=>{qLen=+b.dataset.v;sync();});
+  document.getElementById("go").onclick=startQuiz;
+}
+function startQuiz(){
+  let ids=N.map(n=>n.id);
+  if(qScope==="dm"||qScope==="iv") ids=ids.filter(i=>byId[i].b===qScope);
+  if(qScope==="weak"){ids=ids.filter(i=>(S.quiz[i]&&!S.quiz[i].ok)||st(i)<2); if(!ids.length) ids=N.map(n=>n.id);}
+  const pool={}; ids.forEach(i=>pool[i]=shuffle(Q.filter(q=>q[0]===i)));
+  const picked=[]; let round=0;
+  while(picked.length<qLen){
+    let added=false;
+    for(const i of shuffle(ids)){if(picked.length>=qLen) break; if(pool[i][round]){picked.push(pool[i][round]);added=true;}}
+    if(!added) break; round++;
+  }
+  qz={qs:shuffle(picked).map(q=>({n:q[0],t:q[1],opts:shuffle(q[2].map((o,k)=>({o,good:k===0}))),ex:q[3]})),i:0,ans:[]};
+  drawQ();
+}
+function drawQ(){
+  const q=qz.qs[qz.i], n=byId[q.n];
+  const dots=qz.qs.map((_,k)=>`<i class="${k<qz.ans.length?(qz.ans[k]?"ok":"ko"):k===qz.i?"cur":""}"></i>`).join("");
+  document.getElementById("quizBox").innerHTML=`
+   <div class="qhead"><span class="tag ${n.b}">${n.b==="dm"?"Dossier médical":"Identitovigilance"} · ${n.t}</span><span class="tag">Question ${qz.i+1} / ${qz.qs.length}</span></div>
+   <div class="dots">${dots}</div>
+   <div class="qtext">${q.t}</div>
+   <div class="opts">${q.opts.map((o,k)=>`<button class="opt" data-k="${k}"><span class="k">${"ABCD"[k]}</span><span>${o.o}</span></button>`).join("")}</div>
+   <div id="fbz"></div>`;
+  document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answer(+b.dataset.k));
+}
+function answer(k){
+  const q=qz.qs[qz.i], ok=q.opts[k].good; qz.ans.push(ok);
+  document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true; if(q.opts[j].good) b.classList.add("good"); else if(j===k) b.classList.add("bad");});
+  const last=qz.i===qz.qs.length-1;
+  document.getElementById("fbz").innerHTML=`<div class="fb ${ok?"ok":"ko"}"><strong>${ok?["Bravo !","Exact !","Bien vu !","Parfait !"][Math.floor(Math.random()*4)]:"Pas tout à fait…"}</strong>${q.ex}</div><div class="btns" style="margin-top:12px"><button class="big" id="nx">${last?"Voir mon bilan":"Question suivante"}</button></div>`;
+  document.querySelectorAll(".dots i")[qz.i].className=ok?"ok":"ko";
+  const nx=document.getElementById("nx"); nx.focus({preventScroll:true});
+  nx.onclick=()=>{if(last) results(); else {qz.i++;drawQ();}};
+}
+function results(){
+  const per={}; qz.qs.forEach((q,k)=>{(per[q.n]=per[q.n]||[]).push(qz.ans[k]);});
+  const good=[],bad=[];
+  Object.entries(per).forEach(([id,arr])=>{const ok=arr.every(Boolean);S.quiz[id]={ok};(ok?good:bad).push(id); if(!ok&&st(id)===2) S.st[id]=1;});
+  save(); refresh();
+  const score=qz.ans.filter(Boolean).length, tot=qz.ans.length, p=Math.round(score/tot*100);
+  const msg=p>=90?"Excellent, tu es prête pour mardi !":p>=70?"Très bien, encore quelques points à consolider.":p>=50?"C'est en bonne voie. Relis les fiches à retravailler puis refais un quiz.":"Pas de panique : reprends les fiches ci-dessous, puis relance un quiz « points faibles ».";
+  const li=ids=>ids.map(i=>`<li><a href="#f-${i}" data-goto="${i}">${byId[i].t}</a></li>`).join("");
+  document.getElementById("quizBox").innerHTML=`
+   <div class="score"><div class="big-n" style="color:${p>=70?"var(--ok)":p>=50?"var(--sun)":"var(--ko)"}">${score}/${tot}</div><div><h2 style="font-size:1.5rem">${msg}</h2><p class="note">Une notion est acquise si tu as eu juste à toutes ses questions. Une notion ratée repasse en « En cours » dans ta checklist.</p></div></div>
+   <div class="res-grid">
+    <div class="res ok"><h4>Acquises (${good.length})</h4>${good.length?`<ul>${li(good)}</ul>`:'<p class="note">Aucune pour l\'instant.</p>'}</div>
+    <div class="res ko"><h4>À retravailler (${bad.length})</h4>${bad.length?`<ul>${li(bad)}</ul>`:'<p class="note">Rien à retravailler sur ce quiz.</p>'}</div>
+   </div>
+   <div class="btns"><button class="big" id="again">Nouveau quiz</button>${bad.length?'<button class="big ghost" id="weakq">Quiz sur mes points faibles</button>':""}</div>`;
+  document.getElementById("again").onclick=quizSetup;
+  const w=document.getElementById("weakq"); if(w) w.onclick=()=>{qScope="weak";startQuiz();};
+}
+
+/* ============ INIT ============ */
+refresh(); quizSetup(); setSeg(); showTab(S.tab);
+</script>
+</body>
+</html>
