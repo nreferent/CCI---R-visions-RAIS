@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Fiches, cartes mentales interactives, quiz et checklist pour réviser le dossier patient et l'identitovigilance (titre pro SAMA).">
+<meta name="description" content="Fiches, cartes mentales interactives, flashcards, quiz et checklist pour réviser le dossier patient et l'identitovigilance (titre pro SAMA).">
 <meta name="theme-color" content="#7a4fd6">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%237a4fd6'/%3E%3Cpath d='M20 34l8 8 16-18' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <title>Révisions SAMA du 13 octobre</title>
@@ -242,6 +242,101 @@ aside.side{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;
   .sideL .tip,.sideR .tip{left:50%;right:auto;transform:translateX(-50%)}
   .paper{padding:22px 16px}
 }
+/* ===== Flashcards ===== */
+@media (max-width:520px){#fc .fstat{padding:8px 9px;gap:6px}#fc .fstat b{font-size:1.2rem}#fc .fstat .fic{font-size:1.2rem}}
+#fc{--dm2:#4fb3ff;--iv2:#c08bff;--sama2:#ffc24a;display:grid;gap:16px;overflow-x:clip}
+
+/* En-tête */
+#fc .ftop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+#fc .fh{font-family:var(--f-display);font-size:clamp(1.6rem,4.5vw,2.2rem);line-height:1;margin:0}
+#fc .fh span{background:linear-gradient(90deg,var(--dm),var(--iv),var(--sama));-webkit-background-clip:text;background-clip:text;color:transparent}
+#fc .fdecks{display:flex;gap:6px;flex-wrap:wrap}
+#fc .fdeck{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-weight:800;font-size:.85rem;display:flex;gap:6px;align-items:center}
+#fc .fdeck i{width:10px;height:10px;border-radius:50%;display:inline-block}
+#fc .fdeck.fon{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* HUD */
+#fc .fhud{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#fc .fstat{background:var(--surface);border-radius:18px;padding:10px 12px;box-shadow:0 4px 14px rgba(40,30,110,.08);display:flex;align-items:center;gap:10px;min-width:0}
+#fc .fstat .fic{font-size:1.5rem;line-height:1}
+#fc .fstat b{font-family:var(--f-display);font-size:1.5rem;line-height:1;display:block;font-variant-numeric:tabular-nums}
+#fc .fstat small{font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+#fc .fstat.fhot{animation:pulse .5s}
+@keyframes pulse{50%{transform:scale(1.08)}}
+#fc .fprog{height:12px;border-radius:999px;background:var(--surface);overflow:hidden;box-shadow:inset 0 0 0 2px var(--line)}
+#fc .fprog span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--dm2),var(--iv2),var(--sama2));border-radius:999px;transition:width .4s}
+
+/* Table */
+#fc .ftable{position:relative;height:min(430px,62vh);min-height:330px;display:grid;place-items:center;perspective:1400px}
+#fc .fghost{position:absolute;width:min(420px,92%);height:88%;border-radius:28px;background:var(--surface);box-shadow:var(--shadow);opacity:.55}
+#fc .fghost.fg1{transform:rotate(-5deg) translateY(10px)}
+#fc .fghost.fg2{transform:rotate(4deg) translateY(16px);opacity:.35}
+#fc .fcard{position:absolute;width:min(420px,92%);height:88%;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;z-index:3}
+#fc .fcard.fanim{transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .45s}
+#fc .finner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,1.4,.5,1)}
+#fc .fcard.fflipped .finner{transform:rotateY(180deg)}
+#fc .fface{position:absolute;inset:0;border-radius:28px;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;padding:22px;overflow:hidden}
+#fc .ffront{color:#fff;background:var(--c1)}
+#fc .ffront::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 12%,rgba(255,255,255,.35) 0 60px,transparent 61px),radial-gradient(circle at 8% 95%,rgba(255,255,255,.18) 0 90px,transparent 91px),repeating-linear-gradient(135deg,rgba(255,255,255,.06) 0 12px,transparent 12px 24px)}
+#fc .ffront>*{position:relative}
+#fc .fkind{align-self:flex-start;background:rgba(255,255,255,.25);border-radius:999px;padding:4px 12px;font-weight:800;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase}
+#fc .femoji{font-size:3.2rem;line-height:1;margin-top:auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15))}
+#fc .fq{font-family:var(--f-display);font-weight:800;font-size:clamp(1.5rem,5vw,2.1rem);line-height:1.1;margin:10px 0 auto;text-wrap:balance}
+#fc .fq.fbig{font-size:clamp(3rem,13vw,4.6rem)}
+#fc .ftap{font-size:.85rem;font-weight:700;opacity:.85;display:flex;gap:6px;align-items:center}
+#fc .fback{transform:rotateY(180deg);background:var(--surface);border:4px solid var(--c1)}
+#fc .fback .fkind{background:var(--c1);color:#fff}
+#fc .fback .fbq{font-family:var(--f-display);font-weight:700;font-size:1.05rem;color:var(--c1);margin:12px 0 6px;line-height:1.2}
+#fc .fback .fa{font-size:clamp(1.05rem,3.4vw,1.25rem);font-weight:600;line-height:1.45;margin:auto 0;overflow:auto}
+#fc .fback .fa b{color:var(--c1)}
+#fc .fback .fsrc{font-size:.75rem;color:var(--muted);font-weight:700}
+#fc .fstamp{position:absolute;top:26px;font-family:var(--f-display);font-weight:800;font-size:1.6rem;padding:2px 14px;border:4px solid;border-radius:12px;opacity:0;z-index:5;pointer-events:none;background:var(--surface)}
+#fc .fstamp.fyes{right:22px;color:var(--ok);transform:rotate(12deg)}
+#fc .fstamp.fno{left:22px;color:var(--ko);transform:rotate(-12deg)}
+
+/* Commandes */
+#fc .fctrl{display:flex;justify-content:center;align-items:center;gap:14px}
+#fc .frb{border:0;border-radius:999px;font-weight:800;display:flex;align-items:center;gap:8px;padding:12px 20px;box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .1s}
+#fc .frb:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+#fc .frb.fno{background:var(--ko);color:#fff}
+#fc .frb.fyes{background:var(--ok);color:#fff}
+#fc .frb.fflip{background:var(--surface);color:var(--ink);width:58px;height:58px;padding:0;justify-content:center;font-size:1.4rem;border:3px solid var(--line)}
+#fc .fkeys{text-align:center;font-size:.8rem;color:var(--muted)}
+#fc .fkeys kbd{font-family:var(--f-body);font-weight:800;background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:7px;padding:0 6px}
+
+/* Boîtes */
+#fc .fboxes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#fc .fbox{border-radius:18px;padding:10px 12px;display:flex;gap:10px;align-items:center;font-weight:800}
+#fc .fbox b{font-family:var(--f-display);font-size:1.5rem;font-variant-numeric:tabular-nums}
+#fc .fbox small{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+#fc .fbox.fb0{background:var(--ko-soft);color:var(--ko)} .fbox.fb1{background:#fff1c7;color:#9a6a00} .fbox.fb2{background:var(--ok-soft);color:var(--ok)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #fc .fbox.fb1{background:#463a12;color:#ffd35c}}
+:root[data-theme="dark"] #fc .fbox.fb1{background:#463a12;color:#ffd35c}
+#fc .ffoot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;font-size:.85rem;color:var(--muted)}
+#fc .flink{border:0;background:none;color:var(--muted);text-decoration:underline;font-weight:700;padding:0}
+
+/* Fin de partie */
+#fc .fend{position:absolute;inset:0;display:grid;place-items:center;z-index:6}
+#fc .fendcard{width:min(440px,94%);background:var(--surface);border-radius:28px;box-shadow:var(--shadow);padding:26px;text-align:center;display:grid;gap:12px;animation:pop .5s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+#fc .fendcard .ftrophy{font-size:3.4rem;line-height:1}
+#fc .fendcard h2{font-family:var(--f-display);font-size:1.8rem;margin:0}
+#fc .fendstats{display:flex;justify-content:center;gap:18px;flex-wrap:wrap}
+#fc .fendstats div{font-weight:800;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+#fc .fendstats b{display:block;font-family:var(--f-display);font-size:1.8rem;color:var(--ink);letter-spacing:0}
+#fc .fendbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+#fc .fpill{border:0;border-radius:999px;padding:10px 18px;font-weight:800;background:var(--iv);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+#fc .fpill.falt{background:var(--surface);color:var(--ink);border:2px solid var(--line);box-shadow:none}
+
+/* Effets */
+.ffloat{position:fixed;font-family:var(--f-display);font-weight:800;font-size:1.6rem;color:var(--ok);pointer-events:none;z-index:50;animation:up 1s forwards}
+@keyframes up{to{transform:translateY(-70px);opacity:0}}
+.ftoast{position:fixed;left:50%;top:calc(18px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);font-weight:800;padding:10px 18px;border-radius:999px;z-index:60;animation:toast 2.2s forwards;white-space:nowrap}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,-20px)}12%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+@media (max-width:520px){#fc .fhud .fstat small{display:none}#fc .frb .flbl{display:none}#fc .frb{padding:14px 18px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 <style>
@@ -265,6 +360,7 @@ img{max-width:100%}
       <nav class="tabs" role="tablist">
         <button class="tab" role="tab" data-tab="fiches"><span class="dot" style="background:var(--dm)"></span>Fiches</button>
         <button class="tab" role="tab" data-tab="cartes"><span class="dot" style="background:var(--sama)"></span>Cartes mentales</button>
+        <button class="tab" role="tab" data-tab="flash"><span class="dot" style="background:var(--ok)"></span>Flashcards</button>
         <button class="tab" role="tab" data-tab="quiz"><span class="dot" style="background:var(--iv)"></span>Quiz</button>
       </nav>
 
@@ -284,6 +380,58 @@ img{max-width:100%}
         <p class="intro" style="margin-top:-6px">Mode <b>Lire</b> : passe la souris (ou touche) un mot souligné pour voir le détail. Mode <b>Compléter</b> : replace les étiquettes dans les bonnes branches, puis clique sur Corriger.</p>
         <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" fill="#f8f3ea"/><line x1="0" y1="0" x2="0" y2="5" stroke="#1f1d1a" stroke-width="1.7"/></pattern></defs></svg>
         <div id="paperWrap"></div>
+      </section>
+
+      <section class="panel" id="p-flash" role="tabpanel" hidden>
+<div id="fc">
+
+
+
+
+  <div class="ftop">
+    <h2 class="fh">Flash<span>cards</span></h2>
+    <div class="fdecks" id="decks">
+      <button class="fdeck" data-d="all"><i style="background:linear-gradient(90deg,var(--dm),var(--iv),var(--sama))"></i>Tout</button>
+      <button class="fdeck" data-d="dm"><i style="background:var(--dm)"></i>Dossier médical</button>
+      <button class="fdeck" data-d="iv"><i style="background:var(--iv)"></i>Identitovigilance</button>
+      <button class="fdeck" data-d="sama"><i style="background:var(--sama)"></i>Métier</button>
+    </div>
+  </div>
+
+  <div class="fhud">
+    <div class="fstat" id="stStreak"><span class="fic">🔥</span><div><b id="streak">0</b><small>Série</small></div></div>
+    <div class="fstat" id="stPts"><span class="fic">⭐</span><div><b id="pts">0</b><small>Points</small></div></div>
+    <div class="fstat"><span class="fic">🃏</span><div><b id="count">0/0</b><small>Cartes</small></div></div>
+  </div>
+  <div class="fprog"><span id="progBar"></span></div>
+
+  <div class="ftable" id="table">
+    <div class="fghost fg2"></div><div class="fghost fg1"></div>
+    <div class="fcard" id="card" tabindex="0" aria-live="polite">
+      <div class="fstamp fyes">JE SAIS !</div><div class="fstamp fno">À REVOIR</div>
+      <div class="finner">
+        <div class="fface ffront"><span class="fkind" id="fKind"></span><div class="femoji" id="fEmoji"></div><div class="fq" id="fQ"></div><div class="ftap">👆 Touche ou <b>Espace</b> pour retourner</div></div>
+        <div class="fface fback"><span class="fkind" id="bKind"></span><div class="fbq" id="bQ"></div><div class="fa" id="bA"></div><div class="fsrc" id="bSrc"></div></div>
+      </div>
+    </div>
+    <div class="fend" id="end" hidden></div>
+  </div>
+
+  <div class="fctrl">
+    <button class="frb fno" id="btnNo"><span>↺</span><span class="flbl">À revoir</span></button>
+    <button class="frb fflip" id="btnFlip" aria-label="Retourner la carte">⟲</button>
+    <button class="frb fyes" id="btnYes"><span class="flbl">Je sais</span><span>✓</span></button>
+  </div>
+  <div class="fkeys">Glisse la carte : <b>à droite</b> si tu sais, <b>à gauche</b> pour la revoir · Clavier : <kbd>Espace</kbd> retourner, <kbd>→</kbd> je sais, <kbd>←</kbd> à revoir</div>
+
+  <div class="fboxes">
+    <div class="fbox fb0"><span>😵</span><div><b id="bx0">0</b><small>À revoir</small></div></div>
+    <div class="fbox fb1"><span>🤔</span><div><b id="bx1">0</b><small>Presque</small></div></div>
+    <div class="fbox fb2"><span>😎</span><div><b id="bx2">0</b><small>Acquises</small></div></div>
+  </div>
+  <div class="ffoot"><span>Une carte passe en « Acquises » après 2 bonnes réponses. Les cartes ratées reviennent à la fin de la partie.</span><button class="flink" id="resetAll">Remettre les scores à zéro</button></div>
+
+</div>
       </section>
 
       <section class="panel" id="p-quiz" role="tabpanel" hidden>
@@ -307,6 +455,7 @@ img{max-width:100%}
     </aside>
   </div>
 </div>
+<canvas id="confetti"></canvas>
 <div class="scrim" id="scrim"></div>
 <button class="fab" id="fab">Checklist · <span id="fabN">0/22</span></button>
 
@@ -462,7 +611,7 @@ const Q = [
 const LS="sama-revisions-v1";
 let S={st:{},quiz:{},tab:"fiches",map:"dm"};
 try{const raw=localStorage.getItem(LS); if(raw) S=Object.assign(S,JSON.parse(raw));}catch(e){}
-if(!["fiches","cartes","quiz"].includes(S.tab)) S.tab="fiches";
+if(!["fiches","cartes","flash","quiz"].includes(S.tab)) S.tab="fiches";
 function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
 const st=id=>S.st[id]||0;
 const STL=["À voir","En cours","Maîtrisé"];
@@ -522,7 +671,7 @@ document.getElementById("resetCl").addEventListener("click",function(){
 function showTab(t){
   S.tab=t; save();
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
-  ["fiches","cartes","quiz"].forEach(k=>document.getElementById("p-"+k).hidden=k!==t);
+  ["fiches","cartes","flash","quiz"].forEach(k=>document.getElementById("p-"+k).hidden=k!==t);
   if(t==="cartes") drawMap();
 }
 document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
@@ -796,6 +945,176 @@ function results(){
   document.getElementById("again").onclick=quizSetup;
   const w=document.getElementById("weakq"); if(w) w.onclick=()=>{qScope="weak";startQuiz();};
 }
+
+(function(){
+
+/* Contenu tiré uniquement des supports de cours (dossier CCI). k = type de carte */
+const C=[
+ ["dm","Question","🗄️","Les 2 modes de conservation du dossier patient ?","<b>Matérialisé</b> (papier) et <b>dématérialisé</b> (numérique). Le contenu est identique."],
+ ["dm","Définition","📁","Le dossier patient","Ensemble de documents qui rassemble les informations <b>administratives, médicales et paramédicales</b> de chaque patient accueilli dans une structure sanitaire."],
+ ["dm","Date clé","⚖️","Loi Kouchner","Loi du <b>4 mars 2002</b> : un <b>dossier unique</b> par patient et un <b>accès direct</b> du patient à son dossier."],
+ ["dm","Question","📑","Les parties du dossier lors d'une hospitalisation ?","Partie <b>administrative</b> (à l'admission), partie <b>sociale</b> (si le service social intervient), partie <b>soins</b>."],
+ ["dm","Question","🎨","Pourquoi un code couleur pour les dossiers ?","Chaque document a une couleur liée à une fonction : on évite <b>confusions, mélanges, erreurs et pertes</b>. Cela facilite le travail."],
+ ["dm","Question","🪪","Les pièces demandées pour constituer le dossier ?","Pièce d'<b>identité avec photo</b>, <b>carte Vitale</b> ou attestation, <b>mutuelle</b> (ou CSS, AME). Si besoin : feuille AT/MP, carnet de soins gratuits."],
+ ["dm","Question","🧒","Pièces supplémentaires pour un patient mineur ?","Pièces d'identité des <b>deux parents</b> + <b>livret de famille</b> ou décision de justice."],
+ ["dm","Question","✍️","Que doit comporter chaque pièce du dossier ?","Elle est <b>datée, signée</b>, avec l'identité du <b>patient</b> et celle du <b>professionnel</b> (art. R.1112-3 du CSP)."],
+ ["dm","Question","✅","Les qualités pour bien tenir le dossier ?","Rigueur, organisation, qualité, traçabilité, objectivité des écrits, bonne logistique, archivage sécurisé, confidentialité."],
+ ["dm","Définition","🔎","La traçabilité","L'ensemble des informations qui permettent de <b>retrouver, à tout moment</b>, l'historique d'une action, d'un soin, d'un document ou d'un produit."],
+ ["dm","Question","🔐","Qui est responsable de la conservation du dossier ?","Le <b>directeur</b> de l'établissement, ou le <b>médecin</b> en cabinet libéral."],
+ ["dm","Piège","🤔","À qui appartient le dossier médical ?","À personne : sa propriété <b>n'est pas définie</b>. Ni au patient, ni à l'établissement."],
+ ["dm","Sigle","🛡️","CNIL","<b>Commission Nationale de l'Informatique et des Libertés</b> : informe, accompagne, sensibilise au RGPD, peut contrôler et sanctionner."],
+ ["dm","Sigle","📜","RGPD","<b>Règlement général sur la protection des données</b>, en application depuis le <b>25 mai 2018</b>."],
+ ["dm","Question","👥","Qui peut consulter le dossier ?","Le <b>patient</b> (ou un mandataire, ou un médecin intermédiaire), les titulaires de l'<b>autorité parentale</b>, le <b>représentant légal</b>, l'<b>ayant droit</b> d'une personne décédée."],
+ ["dm","Question","🕯️","Les 4 conditions d'accès au dossier d'un patient décédé ?","Le <b>décès</b> · l'<b>absence de volonté contraire</b> du défunt · la <b>qualité de bénéficiaire</b> · la <b>motivation</b> de la demande."],
+ ["dm","Chiffre","⏳","20 ans","Durée de conservation en <b>règle générale</b>, à compter du dernier séjour. C'est aussi le délai avant élimination."],
+ ["dm","Chiffre","⏳","10 ans","Conservation <b>après le décès</b> du patient. Et durée de conservation du <b>DMP</b> après sa clôture."],
+ ["dm","Chiffre","🧸","28 ans","Patient de <b>moins de 8 ans</b> : dossier conservé jusqu'à ses 28 ans."],
+ ["dm","Chiffre","🩸","30 ans","Conservation des dossiers de <b>transfusion sanguine</b>."],
+ ["dm","Chiffre","⏱️","48 h","<b>Délai de réflexion</b> minimum avant la communication du dossier."],
+ ["dm","Chiffre","📬","8 jours","Délai <b>maximum</b> de communication pour des informations de <b>moins de 5 ans</b>."],
+ ["dm","Chiffre","📅","2 mois","Délai max pour des informations de <b>plus de 5 ans</b>. Et délai pour <b>saisir la CADA</b> après un refus."],
+ ["dm","Question","✉️","Comment demander l'accès au dossier ?","<b>Courrier en recommandé avec AR</b> au directeur, <b>justificatif d'identité</b>, et choix du <b>mode de communication</b>."],
+ ["dm","Date clé","🇪🇺","CJUE, 26 octobre 2023","La <b>première copie</b> du dossier médical est <b>gratuite</b>, sans avoir à justifier la demande."],
+ ["dm","Question","🚫","Qu'est-ce qui n'est PAS communicable ?","Les informations recueillies auprès de <b>tiers</b> extérieurs à la prise en charge (ou les concernant) et les <b>notes personnelles</b> du médecin."],
+ ["dm","Question","🗑️","Qui décide d'éliminer un dossier ?","Le <b>directeur</b>, après avis du médecin responsable du <b>DIM</b>, à l'issue des 20 ans."],
+ ["dm","Sigle","🏷️","DIM","<b>Département de l'Information Médicale</b>."],
+ ["dm","Sigle","🏛️","CADA","<b>Commission d'Accès aux Documents Administratifs</b> : à saisir sous 2 mois (établissement public), avis en 1 mois, puis tribunal administratif."],
+ ["dm","Question","🩺","Un médecin libéral refuse de communiquer le dossier : que faire ?","Saisir le <b>conseil départemental de l'Ordre</b> ou le tribunal. Sans réponse : la <b>CNIL</b>."],
+ ["dm","Sigle","💻","DMP","<b>Dossier Médical Partagé</b> : carnet de santé numérique, géré par l'Assurance maladie, <b>non obligatoire</b>, intégré à <b>Mon espace santé</b>."],
+ ["iv","Définition","🛡️","L'identitovigilance","Ensemble des mesures mises en œuvre pour <b>fiabiliser l'identification</b> de l'usager afin de <b>sécuriser ses données de santé</b>, à toutes les étapes de sa prise en charge."],
+ ["iv","Question","⚠️","L'événement indésirable le plus fréquent ?","L'<b>administration de soins au mauvais patient</b>."],
+ ["iv","Question","🎯","L'objectif final de l'identitovigilance ?","Garantir <b>la bonne identité, au bon moment, pour le bon patient</b>."],
+ ["iv","Sigle","🆔","INS","<b>Identité Nationale de Santé</b> : un matricule (NIR ou NIA) + 5 traits. Obligatoire depuis le <b>1er janvier 2021</b>."],
+ ["iv","Question","✋","Les 5 traits INS ?","Nom de naissance · prénom(s) de naissance · date de naissance · sexe · code INSEE du lieu de naissance."],
+ ["iv","Sigle","🔢","NIR","<b>Numéro d'Inscription au Répertoire</b> : le numéro de sécurité sociale, attribué de manière définitive."],
+ ["iv","Sigle","⏸️","NIA","<b>Numéro Identifiant d'Attente</b> : numéro provisoire, pour les personnes qui n'ont pas encore de NIR définitif."],
+ ["iv","Question","🔗","Dans quel ordre : RNIV ou INSi ?","D'abord l'identité est <b>validée selon le RNIV</b>, puis l'INS est <b>récupérée ou vérifiée via le téléservice INSi</b>."],
+ ["iv","Question","👤","Qui est le premier concerné par l'identitovigilance ?","Le <b>patient</b>, sa famille ou sa personne de confiance. L'usager est acteur de sa sécurité."],
+ ["iv","Définition","📌","Les traits stricts","Nom de famille, nom marital, prénom, sexe, date de naissance. Le système le plus connu : <b>NPDS</b>."],
+ ["iv","Définition","📇","Les traits étendus","Adresse, lieu de naissance, téléphone… Ils complètent l'identité et permettent de <b>sélectionner le patient dans une liste</b>."],
+ ["iv","Définition","🩸","Les traits complémentaires","Groupe sanguin, pathologie… <b>Confidentiels</b>, utilisés par des professionnels habilités en cas de doute persistant."],
+ ["iv","Sigle","🔑","IPP","<b>Identifiant Permanent du Patient</b> : numéro unique attribué de façon définitive dès le <b>premier contact</b> avec l'établissement."],
+ ["iv","Question","⌨️","Les règles de saisie de l'identité ?","<b>MAJUSCULES</b>, sans accent ni caractère diacritique, tiret et apostrophe remplacés par un <b>espace</b>, pas d'abréviation."],
+ ["iv","Question","📇","Les dispositifs à haut niveau de confiance ?","<b>Carte nationale d'identité</b> · <b>passeport</b> · <b>titre de séjour</b>."],
+ ["iv","Définition","👯","Un doublon","<b>Deux identifiants</b> (ou plus) pour <b>une même personne</b>."],
+ ["iv","Définition","💥","Une collision","<b>Un même identifiant</b> attribué à <b>deux personnes</b> différentes (ou plus)."],
+ ["sama","Définition","🏥","Le poste de SAMA","Assure le <b>fonctionnement des secrétariats médicaux</b> : gestion administrative des dossiers patients et renseignements d'ordre général."],
+ ["sama","Question","📍","Où peut exercer un(e) SAMA ?","Hôpitaux (CH, CHU, EPSM…), cliniques, établissements à but non lucratif, cabinets, maisons de santé, imagerie, laboratoires, SMR."],
+ ["sama","Question","🚨","Les 2 vigilances particulières du/de la SAMA ?","Le <b>secret professionnel</b> et l'<b>identitovigilance</b>."],
+ ["sama","Question","💬","Les qualités relationnelles attendues ?","Empathie, aisance relationnelle (diplomatie), écoute, disponibilité, discrétion, réactivité, sens de l'initiative."],
+ ["sama","Sigle","1️⃣","AT1","Activité type 1 : <b>Assurer l'accueil du patient et les activités administratives courantes</b> d'une structure médicale (CP1 à CP4)."],
+ ["sama","Sigle","2️⃣","AT2","Activité type 2 : <b>Assister les professionnels de santé</b> dans le suivi et la coordination du <b>parcours du patient</b> (CP5 à CP7)."],
+ ["sama","Question","📈","Quelles évolutions possibles ?","Concours d'<b>assistant médico-administratif</b> (fonction publique hospitalière), puis <b>coordinateur</b> ou <b>encadrant</b> des secrétariats médicaux."]
+];
+const DECK={dm:{n:"Dossier médical",c:"linear-gradient(145deg,#1b7fd1,#47b4ff)",solid:"#1b7fd1"},iv:{n:"Identitovigilance",c:"linear-gradient(145deg,#6d3fd1,#b67cff)",solid:"#7a4fd6"},sama:{n:"Métier de SAMA",c:"linear-gradient(145deg,#ee7b00,#ffbf3c)",solid:"#e07800"}};
+const CARDS=C.map((c,i)=>({id:i,d:c[0],k:c[1],e:c[2],q:c[3],a:c[4]}));
+
+/* État (boîtes de Leitner gardées dans le navigateur) */
+const FLS="sama-flashcards-v1";
+let box={}; try{box=JSON.parse(localStorage.getItem(FLS)||"{}")||{};}catch(e){}
+const saveBox=()=>{try{localStorage.setItem(FLS,JSON.stringify(box));}catch(e){}};
+let deck="all", queue=[], total=0, done=0, streak=0, best=0, pts=0, good=0, missed=new Set(), cur=null, flipped=false;
+const $=id=>document.getElementById(id);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+function start(list){
+  const pool=list||CARDS.filter(c=>deck==="all"||c.d===deck);
+  queue=shuffle(pool); total=queue.length; done=0; streak=0; pts=0; good=0; best=0; missed=new Set();
+  $("end").hidden=true; $("card").hidden=false; document.querySelectorAll(".fghost").forEach(g=>g.hidden=false);
+  document.querySelectorAll(".fdeck").forEach(b=>b.classList.toggle("fon",b.dataset.d===deck));
+  next(true);
+}
+function render(){
+  const c=cur, D=DECK[c.d];
+  const card=$("card");
+  card.style.setProperty("--c1",D.solid);
+  card.querySelector(".ffront").style.background=D.c;
+  $("fKind").textContent=D.n+" · "+c.k; $("fEmoji").textContent=c.e;
+  const q=$("fQ"); q.textContent=c.q; q.classList.toggle("fbig",c.k==="Chiffre"||(c.k==="Sigle"&&c.q.length<=4));
+  $("bKind").textContent=c.k; $("bQ").textContent=c.q; $("bA").innerHTML=c.a;
+  const b=box[c.id]||0; $("bSrc").textContent=["Pas encore acquise","Encore une bonne réponse pour l'acquérir","Carte acquise 😎"][b];
+}
+function hud(){
+  $("streak").textContent=streak; $("pts").textContent=pts; $("count").textContent=Math.min(done+1,total)+"/"+total;
+  $("progBar").style.width=(total?done/total*100:0)+"%";
+  const pool=CARDS.filter(c=>deck==="all"||c.d===deck), n=[0,0,0]; pool.forEach(c=>n[box[c.id]||0]++);
+  $("bx0").textContent=n[0]; $("bx1").textContent=n[1]; $("bx2").textContent=n[2];
+}
+function next(first){
+  const card=$("card");
+  if(!queue.length){ finish(); return; }
+  cur=queue.shift(); flipped=false;
+  card.classList.remove("fanim","fflipped"); card.style.transform="translateY(30px) scale(.94)"; card.style.opacity="0";
+  stamps(0); render(); hud();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{card.classList.add("fanim");card.style.transform="";card.style.opacity="1";}));
+}
+function flip(){ if(!cur) return; flipped=!flipped; $("card").classList.toggle("fflipped",flipped); }
+function stamps(x){ const y=document.querySelector(".fstamp.fyes"), n=document.querySelector(".fstamp.fno"); y.style.opacity=Math.max(0,Math.min(1,x/110)); n.style.opacity=Math.max(0,Math.min(1,-x/110)); }
+function rate(ok){
+  if(!cur) return;
+  const card=$("card"), c=cur; cur=null;
+  card.classList.add("fanim"); card.style.transform=`translateX(${ok?140:-140}%) rotate(${ok?24:-24}deg)`; card.style.opacity="0";
+  if(ok){
+    streak++; best=Math.max(best,streak); good++;
+    const gain=10*(streak>=5?3:streak>=3?2:1); pts+=gain; floatTxt("+"+gain+(streak>=3?" 🔥":""));
+    box[c.id]=Math.min(2,(box[c.id]||0)+1);
+    pulse("stPts"); if(streak>=3) pulse("stStreak");
+    if(streak===5) toast("🔥 5 d'affilée ! Points ×3"); else if(streak===10) toast("🚀 10 d'affilée, impressionnant !"); else if(streak===3) toast("🔥 Combo ! Points ×2");
+  } else {
+    streak=0; box[c.id]=0; missed.add(c.id); queue.push(c);
+  }
+  if(ok) done++;
+  saveBox(); setTimeout(()=>next(),260);
+}
+function pulse(id){const e=$(id); e.classList.remove("fhot"); void e.offsetWidth; e.classList.add("fhot");}
+function floatTxt(t){const r=$("card").getBoundingClientRect(); const f=document.createElement("div"); f.className="ffloat"; f.textContent=t; f.style.left=(r.left+r.width/2-30)+"px"; f.style.top=(r.top+40)+"px"; document.body.appendChild(f); setTimeout(()=>f.remove(),1000);}
+function toast(t){const e=document.createElement("div"); e.className="ftoast"; e.textContent=t; document.body.appendChild(e); setTimeout(()=>e.remove(),2200);}
+function finish(){
+  hud(); $("progBar").style.width="100%"; $("count").textContent=total+"/"+total;
+  $("card").hidden=true; document.querySelectorAll(".fghost").forEach(g=>g.hidden=true);
+  const firstTry=total-missed.size, rate=Math.round(firstTry/total*100);
+  const t=rate>=90?["🏆","Bravo, championne !"]:rate>=70?["🥈","Très belle partie !"]:rate>=50?["💪","Ça progresse !"]:["🌱","On continue, ça va rentrer !"];
+  $("end").innerHTML=`<div class="fendcard"><div class="ftrophy">${t[0]}</div><h2>${t[1]}</h2>
+   <div class="fendstats"><div><b>${firstTry}/${total}</b>Du 1er coup</div><div><b>${pts}</b>Points</div><div><b>${best}</b>Meilleure série</div></div>
+   <div class="fendbtns">${missed.size?`<button class="fpill" id="redo">Revoir mes ${missed.size} carte${missed.size>1?"s":""} difficile${missed.size>1?"s":""}</button>`:""}<button class="fpill ${missed.size?"falt":""}" id="again">Nouvelle partie</button></div></div>`;
+  $("end").hidden=false;
+  if(rate>=70) confetti();
+  const r=$("redo"); if(r) r.onclick=()=>start(CARDS.filter(c=>missed.has(c.id)));
+  $("again").onclick=()=>start();
+}
+
+/* Glisser la carte (souris + tactile) */
+(function(){
+  const card=$("card"); let sx=0,sy=0,dx=0,drag=false,id=null;
+  card.addEventListener("pointerdown",e=>{ if(!cur) return; drag=true; id=e.pointerId; sx=e.clientX; sy=e.clientY; dx=0; card.classList.remove("fanim"); card.setPointerCapture(id); card.style.cursor="grabbing"; });
+  card.addEventListener("pointermove",e=>{ if(!drag) return; dx=e.clientX-sx; const dy=e.clientY-sy; card.style.transform=`translate(${dx}px,${dy*0.25}px) rotate(${dx/18}deg)`; stamps(dx); });
+  const end=e=>{ if(!drag) return; drag=false; card.style.cursor="";
+    if(Math.abs(dx)>110){ rate(dx>0); }
+    else { card.classList.add("fanim"); card.style.transform=""; stamps(0); if(Math.abs(dx)<6) flip(); } };
+  card.addEventListener("pointerup",end); card.addEventListener("pointercancel",end);
+})();
+$("btnFlip").onclick=flip; $("btnYes").onclick=()=>rate(true); $("btnNo").onclick=()=>rate(false);
+document.addEventListener("keydown",e=>{
+  if(document.getElementById("p-flash").hidden) return;
+  if(e.target.closest("button")&&e.key===" ") return;
+  if(e.key===" "){e.preventDefault();flip();} else if(e.key==="ArrowRight") rate(true); else if(e.key==="ArrowLeft") rate(false);
+});
+document.querySelectorAll(".fdeck").forEach(b=>b.onclick=()=>{deck=b.dataset.d; start();});
+let armed=false;
+$("resetAll").onclick=function(){ if(!armed){armed=true;this.textContent="Clique encore pour confirmer";return;} box={}; saveBox(); armed=false; this.textContent="Remettre les scores à zéro"; hud(); };
+
+/* Confettis */
+function confetti(){
+  const cv=$("confetti"), ctx=cv.getContext("2d"); cv.width=innerWidth; cv.height=innerHeight;
+  const cols=["#1b7fd1","#7a4fd6","#f08a00","#17a65a","#e2384d","#ffb800"];
+  const P=Array.from({length:160},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*0.5,vx:(Math.random()-.5)*4,vy:2+Math.random()*4,s:5+Math.random()*7,r:Math.random()*6,vr:(Math.random()-.5)*.3,c:cols[Math.floor(Math.random()*cols.length)]}));
+  let t=0; (function f(){ ctx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.05;p.r+=p.vr;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);ctx.restore();});
+    if(++t<240) requestAnimationFrame(f); else ctx.clearRect(0,0,cv.width,cv.height); })();
+}
+start();
+
+})();
 
 /* ============ INIT ============ */
 refresh(); quizSetup(); setSeg(); showTab(S.tab);
